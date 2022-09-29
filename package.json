@@ -1,0 +1,11 @@
+{
+  "name": "project-manager-api-pg",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/klevessonroseno/project-manager-api-pg.git",
+  "author": "klevessonroseno <klevesson.developer@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
