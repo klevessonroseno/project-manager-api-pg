@@ -1,7 +1,5 @@
-import { config } from 'dotenv';
-import pg from 'pg';
-
-config();
+require('dotenv').config();
+const pg = require('pg');
 
 class Database {
   async connect() {
@@ -18,4 +16,4 @@ class Database {
   }
 }
 
-export default new Database().connect;
+module.exports = new Database().connect;
