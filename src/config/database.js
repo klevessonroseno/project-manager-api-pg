@@ -18,4 +18,4 @@ class Database {
   }
 }
 
-module.exports = new Database().connect;
+export default new Database().connect;
