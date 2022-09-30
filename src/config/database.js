@@ -1,5 +1,7 @@
-require('dotenv').config();
-const pg = require('pg');
+import { config } from 'dotenv';
+import pg from 'pg';
+
+config();
 
 class Database {
   async connect() {
