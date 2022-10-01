@@ -27,12 +27,21 @@ class UsersResources {
       }
 
       const { name, email, password } = request.body;
+
+      const userExists = await usersRepository.findByEmail(email);
+
+      if(userExists) return response.status(409).json({
+        error: 'E-mail already registered.',
+      });
+
       const userCreated = await usersRepository.store(name, email, password);
 
-      if(userCreated) return response.status(201).json();
+      if(userCreated) return response.status(201).json({
+        message: 'User registered successfully.',
+      });
 
     } catch (error) {
-      response.status(500).json(error);
+      response.status(500).json({ error });
     }
   };
 }

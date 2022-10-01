@@ -35,7 +35,7 @@ class UsersRepository {
               user_password
             )
           VALUES
-            ($1, $2, $3);
+            ($1, $2, $3)
       `;
       const values = [ name, email, password ];
       const { rowCount } = await pgClient.query(sql, values);
@@ -43,6 +43,29 @@ class UsersRepository {
       if(rowCount && rowCount > 0) return rowCount;
 
       return null;
+  }
+
+  async findByEmail(email) {
+    const pgClient = await connect();
+    const sql = `
+      SELECT
+        user_id,
+        user_name,
+        user_email
+      FROM 
+        users
+      WHERE
+        user_email 
+      LIKE 
+        $1
+    `;
+  
+    const values = [ email ];
+    const { rowCount, rows: [ user ] } = await pgClient.query(sql, values);
+
+   if(rowCount) return user;
+
+    return null;
   }
 }
 
