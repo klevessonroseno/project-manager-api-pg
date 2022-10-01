@@ -25,7 +25,6 @@ class UsersRepository {
   }
 
   async store(name, email, password) {
-    try {
       const pgClient = await connect();
       const sql = `         
         INSERT INTO
@@ -36,7 +35,7 @@ class UsersRepository {
               user_password
             )
           VALUES
-        ($1, $2, $3);
+            ($1, $2, $3);
       `;
       const values = [ name, email, password ];
       const { rowCount } = await pgClient.query(sql, values);
@@ -44,10 +43,6 @@ class UsersRepository {
       if(rowCount && rowCount > 0) return rowCount;
 
       return null;
-
-    } catch (error) {
-      return error;
-    }
   }
 }
 

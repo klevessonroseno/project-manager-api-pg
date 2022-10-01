@@ -1,4 +1,5 @@
 import usersRepository from "../repository/usersRepository";
+import * as Yup from 'yup';
 
 class UsersResources {
   async getAll(request, response) {
@@ -13,10 +14,23 @@ class UsersResources {
 
   async store(request, response) {
     try {
+      const schema = Yup.object().shape({
+        name: Yup.string().required(),
+        email: Yup.string().email().required(),
+        password: Yup.string().required().min(6).max(10),
+      });
+
+      if(!(await schema.isValid(request.body))) {
+        return response.status(400).json({
+          error: 'Validation fails.'
+        });
+      }
+
       const { name, email, password } = request.body;
       const userCreated = await usersRepository.store(name, email, password);
 
-      response.status(201).json(userCreated);
+      if(userCreated) return response.status(201).json();
+
     } catch (error) {
       response.status(500).json(error);
     }
