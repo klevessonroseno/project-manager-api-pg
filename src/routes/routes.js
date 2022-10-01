@@ -6,7 +6,7 @@ const routes = new express.Router();
 
 // Public Routes for Users
 
-routes.post('/sessions', sessionsResources.store)
+routes.post('/sessions', sessionsResources.store);
 
 routes.get('/users', usersResources.getAll);
 

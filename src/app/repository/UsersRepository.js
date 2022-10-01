@@ -51,7 +51,8 @@ class UsersRepository {
       SELECT
         user_id,
         user_name,
-        user_email
+        user_email,
+        user_password
       FROM 
         users
       WHERE
