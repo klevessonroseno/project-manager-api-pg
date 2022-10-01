@@ -1,5 +1,6 @@
 import usersRepository from "../repository/usersRepository";
 import * as Yup from 'yup';
+import usersServices from "../services/UsersServices";
 
 class UsersResources {
   async getAll(request, response) {
@@ -33,8 +34,9 @@ class UsersResources {
       if(userExists) return response.status(409).json({
         error: 'E-mail already registered.',
       });
-
-      const userCreated = await usersRepository.store(name, email, password);
+      
+      const encryptPassword = await usersServices.encryptPassword(password);
+      const userCreated = await usersRepository.store(name, email, encryptPassword);
 
       if(userCreated) return response.status(201).json({
         message: 'User registered successfully.',
