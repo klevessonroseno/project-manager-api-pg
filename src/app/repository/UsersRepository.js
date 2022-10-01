@@ -1,4 +1,5 @@
 import connect from '../../config/database';
+import { User } from '../domain/User';
 
 class UsersRepository {
   async getAll() {
@@ -62,9 +63,27 @@ class UsersRepository {
     `;
   
     const values = [ email ];
-    const { rowCount, rows: [ user ] } = await pgClient.query(sql, values);
 
-   if(rowCount) return user;
+    const { 
+      rowCount, 
+      rows: [ 
+        { 
+          user_id, 
+          user_name, 
+          user_email, 
+          user_password 
+        } 
+      ] 
+    } = await pgClient.query(sql, values);
+
+    const user = new User(
+      user_id, 
+      user_name, 
+      user_email, 
+      user_password
+    );
+
+    if(rowCount) return user;
 
     return null;
   }

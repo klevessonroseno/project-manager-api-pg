@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import usersRepository from '../repository/usersRepository';
 import usersServices from '../services/UsersServices';
 
+
 class SessionsResources {
   async store(request, response) {
     try {
@@ -17,21 +18,25 @@ class SessionsResources {
       }
 
       const { email, password } = request.body;
-      const userExists = await usersRepository.findByEmail(email);
+      const user = await usersRepository.findByEmail(email);
 
-      if(!userExists) {
+      if(!user) {
         return response.status(404).json({
           error: 'Email not registered.',
         });
       }
 
-      const passwordsMatch = await usersServices.comparePasswords(password, userExists.user_password);
+      const passwordsMatch = await usersServices.comparePasswords(password, user.password);
 
-      if(!passwordsMatch) return response.status(401).json({
-        error: 'Incorrect password.',
-      }); 
+      if(!passwordsMatch) {
+        return response.status(401).json({
+          error: 'Incorrect password.',
+        }); 
+      }
 
-      return response.status(200).json(userExists);
+
+
+      return response.status(200).json(user);
 
     } catch (error) {
       
