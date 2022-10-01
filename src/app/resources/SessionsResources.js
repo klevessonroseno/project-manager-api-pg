@@ -1,7 +1,6 @@
 import * as Yup from 'yup';
 import usersRepository from '../repository/usersRepository';
-import usersServices from '../services/UsersServices';
-
+import sessionsServices from '../services/SessionsServices';
 
 class SessionsResources {
   async store(request, response) {
@@ -26,7 +25,7 @@ class SessionsResources {
         });
       }
 
-      const passwordsMatch = await usersServices.comparePasswords(password, user.password);
+      const passwordsMatch = await sessionsServices.comparePasswords(password, user.password);
 
       if(!passwordsMatch) {
         return response.status(401).json({
@@ -34,12 +33,12 @@ class SessionsResources {
         }); 
       }
 
+      const token = sessionsServices.generateJwtToken(user);
 
-
-      return response.status(200).json(user);
+      return response.status(200).json({ token });
 
     } catch (error) {
-      
+      response.status(500).json();
     }
   }
 }
