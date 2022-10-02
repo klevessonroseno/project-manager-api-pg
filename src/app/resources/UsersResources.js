@@ -3,16 +3,6 @@ import * as Yup from 'yup';
 import usersServices from "../services/UsersServices";
 
 class UsersResources {
-  async getAll(request, response) {
-    try {
-      const users = await usersRepository.getAll();
-
-      response.status(200).json(users);
-    } catch (error) {
-      response.status(500).json(error) 
-    }
-  }
-
   async store(request, response) {
     try {
       const schema = Yup.object().shape({
