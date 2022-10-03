@@ -48,6 +48,30 @@ class UsersRepository {
     
     return user;
   }
+
+  async findByid(userId) {
+    const pgClient = await connect();
+    const sql = `
+      SELECT
+        user_id "id",
+        user_name "name",
+        user_email "email",
+        user_password "password"
+      FROM 
+        users
+      WHERE
+        user_id = $1
+    `;
+    const values = [ userId ];
+    const { rowCount, rows } = await pgClient.query(sql, values);
+
+    if(!rowCount) return null;
+
+    const [{ id, name, email, password }] = rows;
+    const user = new User(id, name, email, password);
+
+    return user;
+  }
 }
 
 export default new UsersRepository();
