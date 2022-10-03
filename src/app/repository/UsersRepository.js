@@ -23,47 +23,37 @@ class UsersRepository {
     return null;
   }
 
-  async findByEmail(email) {
+  async findByEmail(userEmail) {
     const pgClient = await connect();
+
     const sql = `
       SELECT
-        user_id,
-        user_name,
-        user_email,
-        user_password
-      FROM 
+        user_id "id",
+        user_name "name",
+        user_email "email",
+        user_password "password"
+      FROM
         users
       WHERE
-        user_email 
-      LIKE 
-        $1
+        user_email LIKE $1
     `;
-  
-    const values = [ email ];
 
-    const { 
+    const values = [ userEmail ];
+    
+    const {
       rowCount, 
-      rows: [ 
-        { 
-          user_id, 
-          user_name, 
-          user_email, 
-          user_password 
-        } 
-      ] 
+      rows: [
+        { id, name, email, password },
+      ],
     } = await pgClient.query(sql, values);
-
-    const user = new User(
-      user_id, 
-      user_name, 
-      user_email, 
-      user_password
-    );
+    
+    const user = new User(id, name, email, password);
 
     if(rowCount) return user;
 
     return null;
   }
+
 }
 
 export default new UsersRepository();
