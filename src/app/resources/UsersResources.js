@@ -38,67 +38,87 @@ class UsersResources {
   };
 
   async update(request, response) {
-    const schema = Yup.object().shape({
-      name: Yup.string(),
-      email: Yup.string().email(),
-      oldPassword: Yup.string().min(6).max(10),
-      password: Yup.string().min(6).max(10).when(
-        'oldPassword', 
-        (oldPassword, field) => { 
-          return oldPassword 
-            ? field.required() 
-            : field; 
-        }
-      ),
-      confirmPassword: Yup.string().min(6).max(10).when(
-        'password',
-        (password, field) => {
-          return password 
-            ? field.required().oneOf([Yup.ref('password')]) 
-            : field;
-        }
-      ),
-    });
-
-    const schemaIsValid = await schema.isValid(request.body);
-    
-    if(!schemaIsValid) {
-      return response.status(400).json({
-        error: 'Validation Fails.',
+    try {
+      const schema = Yup.object().shape({
+        name: Yup.string(),
+        email: Yup.string().email(),
+        oldPassword: Yup.string().min(6).max(10),
+        password: Yup.string().min(6).max(10).when(
+          'oldPassword', 
+          (oldPassword, field) => { 
+            return oldPassword 
+              ? field.required() 
+              : field; 
+          }
+        ),
+        confirmPassword: Yup.string().min(6).max(10).when(
+          'password',
+          (password, field) => {
+            return password 
+              ? field.required().oneOf([Yup.ref('password')]) 
+              : field;
+          }
+        ),
       });
-    }
-
-    const { id } = request.body;
-
-    if(id) return response.status(400).json({
-      error: 'Validation fails.',
-    });
-
-    const { userId } = request;
-    const user = await usersRepository.findByid(userId);
-
-    if(request.body.oldPassword) {
-      let { oldPassword } = request.body;
-      let { password } = user;
-      let passwordsMatch = await usersServices.comparePasswords(oldPassword, password);
-
-      if(!passwordsMatch) {
-        return response.status(401).json({
-          error: 'Old password does not match the entered password.'
+  
+      const schemaIsValid = await schema.isValid(request.body);
+      
+      if(!schemaIsValid) {
+        return response.status(400).json({
+          error: 'Validation Fails.',
         });
       }
+  
+      const { id } = request.body;
+  
+      if(id) return response.status(400).json({
+        error: 'Validation fails.',
+      });
+  
+      const { userId } = request;
+      const user = await usersRepository.findByid(userId);
+      
+      if(request.body.email) {
+        let { email } = request.body;
+
+        if(email !== user.email) {
+          let userFound = await usersRepository.findByEmail(email);
+
+          if(userFound) {
+            return response.status(409).json({
+              error: 'Email already registered by another user.',
+            });
+          }
+        }
+      }
+
+      if(request.body.oldPassword) {
+        let { oldPassword } = request.body;
+        let { password } = user;
+        let passwordsMatch = await usersServices.comparePasswords(oldPassword, password);
+  
+        if(!passwordsMatch) {
+          return response.status(401).json({
+            error: 'Old password does not match the entered password.'
+          });
+        }
+      }
+  
+      if(request.body.password) {
+        let { password } = request.body;
+        request.body.password = await usersServices.encryptPassword(password);
+      }
+      
+      Object.assign(user, request.body);
+  
+      const userUpdated = await usersRepository.update(user);
+  
+      if(userUpdated) {
+        return response.status(204).json();
+      }
+    } catch (error) {
+      return response.status(500).json({ error });
     }
-
-    if(request.body.password) {
-      let { password } = request.body;
-      request.body.password = await usersServices.encryptPassword(password);
-    }
-    
-    Object.assign(user, request.body);
-
-    const result = await usersRepository.update(user);
-
-    response.status(200).json({ result });
   }
 }
 

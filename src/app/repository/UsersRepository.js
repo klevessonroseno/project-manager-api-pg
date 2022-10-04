@@ -38,8 +38,11 @@ class UsersRepository {
     `;
     const values = [ name, email, password, id ];
     const result = await pgClient.query(sql, values);
+    const { rowCount } = result;
+
+    if(rowCount) return rowCount;
     
-    return result;
+    return null;
   }
 
   async findByEmail(userEmail) {
