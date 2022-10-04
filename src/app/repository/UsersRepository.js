@@ -23,6 +23,25 @@ class UsersRepository {
     return null;
   }
 
+  async update(user) {
+    const { id, name, email, password } = user;
+    const pgClient = await connect();
+    const sql = `
+      UPDATE
+        users
+      SET
+        user_name = $1,
+        user_email = $2,
+        user_password = $3
+      WHERE 
+        user_id = $4
+    `;
+    const values = [ name, email, password, id ];
+    const result = await pgClient.query(sql, values);
+    
+    return result;
+  }
+
   async findByEmail(userEmail) {
     const pgClient = await connect();
     const sql = `

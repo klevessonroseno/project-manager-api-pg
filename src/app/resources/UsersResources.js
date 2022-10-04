@@ -39,8 +39,8 @@ class UsersResources {
 
   async update(request, response) {
     const schema = Yup.object().shape({
-      name: Yup.string().required(),
-      email: Yup.string().email().required(),
+      name: Yup.string(),
+      email: Yup.string().email(),
       oldPassword: Yup.string().min(6).max(10),
       password: Yup.string().min(6).max(10).when(
         'oldPassword', 
@@ -64,19 +64,14 @@ class UsersResources {
     
     if(!schemaIsValid) {
       return response.status(400).json({
-        error: 'Validation Fails. =(',
+        error: 'Validation Fails.',
       });
     }
 
-    const { name, email, password } = request.body;
-    
-
-    response.status(200).json({
-      name, 
-      email, 
-      password,
-      oldPassword,
-    });
+    const { userId } = request;
+    const user = await usersRepository.findByid(userId);
+    const result = await usersRepository.update(user);
+    response.status(200).json({ result });
   }
 }
 
