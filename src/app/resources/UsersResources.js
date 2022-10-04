@@ -68,6 +68,12 @@ class UsersResources {
       });
     }
 
+    const { id } = request.body;
+
+    if(id) return response.status(400).json({
+      error: 'Validation fails.',
+    });
+
     const { userId } = request;
     const user = await usersRepository.findByid(userId);
     
