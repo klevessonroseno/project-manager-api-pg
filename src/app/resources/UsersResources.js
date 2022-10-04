@@ -76,6 +76,23 @@ class UsersResources {
 
     const { userId } = request;
     const user = await usersRepository.findByid(userId);
+
+    if(request.body.oldPassword) {
+      let { oldPassword } = request.body;
+      let { password } = user;
+      let passwordsMatch = await usersServices.comparePasswords(oldPassword, password);
+
+      if(!passwordsMatch) {
+        return response.status(401).json({
+          error: 'Old password does not match the entered password.'
+        });
+      }
+    }
+
+    if(request.body.password) {
+      let { password } = request.body;
+      request.body.password = await usersServices.encryptPassword(password);
+    }
     
     Object.assign(user, request.body);
 
