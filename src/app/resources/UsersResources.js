@@ -36,6 +36,48 @@ class UsersResources {
       response.status(500).json({ error });
     }
   };
+
+  async update(request, response) {
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      email: Yup.string().email().required(),
+      oldPassword: Yup.string().min(6).max(10),
+      password: Yup.string().min(6).max(10).when(
+        'oldPassword', 
+        (oldPassword, field) => { 
+          return oldPassword 
+            ? field.required() 
+            : field; 
+        }
+      ),
+      confirmPassword: Yup.string().min(6).max(10).when(
+        'password',
+        (password, field) => {
+          return password 
+            ? field.required().oneOf([Yup.ref('password')]) 
+            : field;
+        }
+      ),
+    });
+
+    const schemaIsValid = await schema.isValid(request.body);
+    
+    if(!schemaIsValid) {
+      return response.status(400).json({
+        error: 'Validation Fails. =(',
+      });
+    }
+
+    const { name, email, password } = request.body;
+    
+
+    response.status(200).json({
+      name, 
+      email, 
+      password,
+      oldPassword,
+    });
+  }
 }
 
 export default new UsersResources();
