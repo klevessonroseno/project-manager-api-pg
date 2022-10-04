@@ -62,7 +62,7 @@ class UsersRepository {
     `;
     const values = [ userEmail ];
     const { rowCount, rows } = await pgClient.query(sql, values);
-    
+
     if(!rowCount) return null;
 
     const [{ id, name, email, password }] = rows;

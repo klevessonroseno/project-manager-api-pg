@@ -11,7 +11,9 @@ class UsersResources {
         password: Yup.string().required().min(6).max(10),
       });
 
-      if(!(await schema.isValid(request.body))) {
+      const schemaIsValid = await schema.isValid(request.body);
+
+      if(!schemaIsValid) {
         return response.status(400).json({
           error: 'Validation fails.'
         });
@@ -118,6 +120,26 @@ class UsersResources {
       }
     } catch (error) {
       return response.status(500).json({ error });
+    }
+  }
+
+  async resetPassword(request, response) {
+    try {
+      const schema = Yup.object().shape({
+        email: Yup.string().email(),
+      });
+
+      const schemaIsValid = await schema.isValid(request.body);
+
+      if(!schemaIsValid) {
+        return response.status(400).json({
+          error: 'Validation fails.',
+        });
+      }
+
+
+    } catch (error) {
+      
     }
   }
 }
