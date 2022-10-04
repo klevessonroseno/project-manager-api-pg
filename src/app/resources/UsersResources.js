@@ -70,7 +70,11 @@ class UsersResources {
 
     const { userId } = request;
     const user = await usersRepository.findByid(userId);
+    
+    Object.assign(user, request.body);
+
     const result = await usersRepository.update(user);
+
     response.status(200).json({ result });
   }
 }
