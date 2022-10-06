@@ -2,23 +2,32 @@ import connect from '../../config/database';
 import { Collaborator } from '../domain/Collaborator';
 
 class CollaboratorRepository {
-  async findByEmail(email) {
+  async findByEmail(emailCollaborator, userId) {
     const pgClient = await connect();
     const sql = `
-      SELECT * FROM 
+      SELECT 
+        id "id",
+        name "name",
+        email "email",
+        password "password",
+        user_id "user_id"
+      FROM 
         collaborators 
       WHERE 
-        email = $1;
+        email LIKE $1
+      AND
+        user_id = $2
     `;
-    const values = [ email ];
-    const result = await pgClient.query(sql, values);
-    const { rowCount, rows } = result;
-    
+    const values = [ emailCollaborator, userId ];
+    const { rowCount, rows } = await pgClient.query(sql, values);
+
     if(!rowCount) return null;
 
-    return rows;
-  }
+    const { id, name, email, password, user_id } = rows;
+    const collaborator = new Collaborator(id, name, email, password, user_id);
 
+    return collaborator;
+  }
 
   async store(name, email, password, userId) {
     const pgClient = await connect();
@@ -30,6 +39,7 @@ class CollaboratorRepository {
         ($1, $2, $3, $4)
     `;
     const values = [ name, email, password, userId ];
+
     const { rowCount } = await pgClient.query(sql, values);
 
     return rowCount;
