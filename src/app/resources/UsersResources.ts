@@ -1,4 +1,4 @@
-import usersRepository from "../repository/usersRepository";
+import usersRepository from "../repository/UsersRepository";
 import * as Yup from 'yup';
 import usersServices from "../services/UsersServices";
 import { Request, Response } from 'express';
