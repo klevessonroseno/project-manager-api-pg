@@ -1,9 +1,10 @@
 import * as Yup from 'yup';
 import usersRepository from '../repository/usersRepository';
 import sessionsServices from '../services/SessionsServices';
+import { Request, Response } from 'express';
 
 class SessionsResources {
-  async store(request, response) {
+  async store(request: Request, response: Response) {
     try {
       const schema = Yup.object().shape({
         email:  Yup.string().email().required(),

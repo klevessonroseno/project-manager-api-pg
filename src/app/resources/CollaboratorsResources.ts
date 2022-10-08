@@ -1,7 +1,8 @@
 import collaboratorRepository from '../repository/CollaboratorRepository';
+import { Request, Response } from 'express';
 
 class CollaboratorsResources {
-  async store(request, response) {
+  async store(request: Request, response: Response) {
     const { userId } = request;
     const { name, email, password } = request.body;
 

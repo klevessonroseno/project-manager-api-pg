@@ -1,9 +1,10 @@
 import usersRepository from "../repository/usersRepository";
 import * as Yup from 'yup';
 import usersServices from "../services/UsersServices";
+import { Request, Response } from 'express';
 
 class UsersResources {
-  async store(request, response) {
+  async store(request: Request, response: Response) {
     try {
       const schema = Yup.object().shape({
         name: Yup.string().required(),
@@ -39,7 +40,7 @@ class UsersResources {
     }
   };
 
-  async update(request, response) {
+  async update(request: Request, response: Response) {
     try {
       const schema = Yup.object().shape({
         name: Yup.string(),
@@ -123,7 +124,7 @@ class UsersResources {
     }
   }
 
-  async resetPassword(request, response) {
+  async resetPassword(request: Request, response: Response) {
     try {
       const schema = Yup.object().shape({
         email: Yup.string().email(),

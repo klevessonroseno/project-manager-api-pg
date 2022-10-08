@@ -2,7 +2,7 @@ import connect from '../../config/database';
 import { User } from '../domain/User';
 
 class UsersRepository {
-  async store(name, email, password) {
+  async store(name: string, email: string, password: string) {
     const pgClient = await connect();
     const sql = `         
       INSERT INTO
@@ -23,7 +23,7 @@ class UsersRepository {
     return null;
   }
 
-  async update(user) {
+  async update(user: User) {
     const { id, name, email, password } = user;
     const pgClient = await connect();
     const sql = `
@@ -45,7 +45,7 @@ class UsersRepository {
     return null;
   }
 
-  async findByEmail(userEmail) {
+  async findByEmail(userEmail: string) {
     const pgClient = await connect();
     const sql = `
       SELECT
@@ -71,7 +71,7 @@ class UsersRepository {
     return user;
   }
 
-  async findByid(userId) {
+  async findByid(userId: number) {
     const pgClient = await connect();
     const sql = `
       SELECT

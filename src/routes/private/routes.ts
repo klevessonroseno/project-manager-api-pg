@@ -1,9 +1,9 @@
-import express from 'express';
+import { Router } from 'express';
 import usersResources from '../../app/resources/UsersResources';
 import collaboratorsResources from '../../app/resources/CollaboratorsResources';
 import authMiddleware from '../../app/middlewares/auth';
 
-const routes = new express.Router();
+const routes = Router();
 
 routes.use(authMiddleware);
 
