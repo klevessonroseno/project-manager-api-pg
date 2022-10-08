@@ -1,4 +1,4 @@
-import collaboratorRepository from '../repository/CollaboratorRepository';
+import collaboratorRepository from '../repositories/CollaboratorRepository';
 import { Request, Response } from 'express';
 
 class CollaboratorsResources {

@@ -1,5 +1,5 @@
 import connect from '../../config/database';
-import { User } from '../domain/User';
+import { IUser } from '../rules/rules';
 
 class UsersRepository {
   async store(name: string, email: string, password: string) {
@@ -23,9 +23,10 @@ class UsersRepository {
     return null;
   }
 
-  async update(user: User) {
+  async update(user: IUser) {
     const { id, name, email, password } = user;
     const pgClient = await connect();
+    const values = [ name, email, password, id ];
     const sql = `
       UPDATE
         users
@@ -34,9 +35,8 @@ class UsersRepository {
         user_email = $2,
         user_password = $3
       WHERE 
-        user_id = $4
+        user_id LIKE $4
     `;
-    const values = [ name, email, password, id ];
     const result = await pgClient.query(sql, values);
     const { rowCount } = result;
 
@@ -66,12 +66,17 @@ class UsersRepository {
     if(!rowCount) return null;
 
     const [{ id, name, email, password }] = rows;
-    const user = new User(id, name, email, password);
-    
+    const user: IUser = {
+      id,
+      name,
+      email,
+      password,
+    };
+
     return user;
   }
 
-  async findByid(userId: number) {
+  async findByid(userId: string) {
     const pgClient = await connect();
     const sql = `
       SELECT
@@ -85,12 +90,16 @@ class UsersRepository {
         user_id = $1
     `;
     const values = [ userId ];
-    const { rowCount, rows } = await pgClient.query(sql, values);
-
-    if(!rowCount) return null;
+    const { rows } = await pgClient.query(sql, values);
 
     const [{ id, name, email, password }] = rows;
-    const user = new User(id, name, email, password);
+
+    const user: IUser = {
+      id,
+      name,
+      email,
+      password,
+    };
 
     return user;
   }

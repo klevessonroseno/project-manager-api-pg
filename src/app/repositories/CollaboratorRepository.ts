@@ -1,8 +1,7 @@
 import connect from '../../config/database';
-import { Collaborator } from '../domain/Collaborator';
 
 class CollaboratorRepository {
-  async findByEmail(emailCollaborator, userId) {
+  async findByEmail(emailCollaborator: string, userId: string) {
     const pgClient = await connect();
     const sql = `
       SELECT 
@@ -16,7 +15,7 @@ class CollaboratorRepository {
       WHERE 
         email LIKE $1
       AND
-        user_id = $2
+        user_id LIKE $2
     `;
     const values = [ emailCollaborator, userId ];
     const { rowCount, rows } = await pgClient.query(sql, values);
@@ -24,12 +23,11 @@ class CollaboratorRepository {
     if(!rowCount) return null;
 
     const { id, name, email, password, user_id } = rows;
-    const collaborator = new Collaborator(id, name, email, password, user_id);
 
-    return collaborator;
+    return ({ id, name, email, password, user_id });
   }
 
-  async store(name, email, password, userId) {
+  async store(name: string, email: string, password: string, userId: string) {
     const pgClient = await connect();
     const sql = `
       INSERT INTO 

@@ -1,7 +1,8 @@
-import usersRepository from "../repository/UsersRepository";
+import usersRepository from "../repositories/UsersRepository";
 import * as Yup from 'yup';
 import usersServices from "../services/UsersServices";
 import { Request, Response } from 'express';
+import { IRequest } from '../rules/rules';
 
 class UsersResources {
   async store(request: Request, response: Response) {
@@ -40,7 +41,7 @@ class UsersResources {
     }
   };
 
-  async update(request: Request, response: Response) {
+  async update(request: IRequest, response: Response) {
     try {
       const schema = Yup.object().shape({
         name: Yup.string(),
@@ -137,10 +138,8 @@ class UsersResources {
           error: 'Validation fails.',
         });
       }
-
-
     } catch (error) {
-      
+      return response.status(500).json({ error });
     }
   }
 }

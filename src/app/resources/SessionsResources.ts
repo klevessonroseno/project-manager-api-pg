@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import usersRepository from '../repository/usersRepository';
+import usersRepository from '../repositories/usersRepository';
 import sessionsServices from '../services/SessionsServices';
 import { Request, Response } from 'express';
 
