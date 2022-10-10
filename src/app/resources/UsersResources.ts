@@ -23,7 +23,7 @@ class UsersResources {
 
       const { name, email, password } = request.body;
 
-      const userExists = await usersRepository.findByEmail(email);
+      const userExists = await usersRepository.checkIfUserExistsByEmail(email);
 
       if(userExists) return response.status(409).json({
         error: 'E-mail already registered.',

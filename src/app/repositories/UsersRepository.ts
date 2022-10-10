@@ -1,9 +1,9 @@
-import connect from '../../config/database';
+import pool from '../../config/database';
 import { IUser } from '../rules/rules';
 
 class UsersRepository {
-  async store(name: string, email: string, password: string) {
-    const pgClient = await connect();
+  async store(name: string, email: string, password: string): Promise<boolean> {
+    const client = await pool.connect();
     const sql = `         
       INSERT INTO
         users 
@@ -16,16 +16,18 @@ class UsersRepository {
           ($1, $2, $3)
     `;
     const values = [ name, email, password ];
-    const { rowCount } = await pgClient.query(sql, values);
+    const { rowCount } = await client.query(sql, values);
+    
+    client.release();
 
-    if(rowCount && rowCount > 0) return rowCount;
+    if(rowCount && rowCount !== 0) return true;
 
-    return null;
+    return false;
   }
 
-  async update(user: IUser) {
+  async update(user: IUser): Promise<boolean> {
     const { id, name, email, password } = user;
-    const pgClient = await connect();
+    const client = await pool.connect();
     const values = [ name, email, password, id ];
     const sql = `
       UPDATE
@@ -37,16 +39,39 @@ class UsersRepository {
       WHERE 
         user_id LIKE $4
     `;
-    const result = await pgClient.query(sql, values);
-    const { rowCount } = result;
+    const { rowCount } = await client.query(sql, values);
 
-    if(rowCount) return rowCount;
-    
-    return null;
+    client.release();
+
+    if(rowCount && rowCount !== 0) return true;
+
+    return false;
   }
 
-  async findByEmail(userEmail: string) {
-    const pgClient = await connect();
+  async checkIfUserExistsByEmail(email: string): Promise<boolean> {
+    const client = await pool.connect();
+    const sql = `
+      SELECT 
+        user_email 
+      FROM 
+        users
+      WHERE
+        user_email 
+      LIKE 
+        $1
+    `;
+    const values = [ email ];
+    const { rowCount } = await client.query(sql, values);
+    
+    client.release();
+
+    if(rowCount && rowCount !== 0) return true;
+
+    return false; 
+  }
+
+  async findByEmail(userEmail: string): Promise<IUser> {
+    const client = await pool.connect();
     const sql = `
       SELECT
         user_id "id",
@@ -61,23 +86,23 @@ class UsersRepository {
         $1
     `;
     const values = [ userEmail ];
-    const { rowCount, rows } = await pgClient.query(sql, values);
+    const { rowCount, rows } = await client.query(sql, values);
+    const user: IUser = {};
 
-    if(!rowCount) return null;
+    if(!rowCount) return user;
 
     const [{ id, name, email, password }] = rows;
-    const user: IUser = {
-      id,
-      name,
-      email,
-      password,
-    };
+    
+    user.id = id;
+    user.name = name;
+    user.email = email;
+    user.password = password;
 
     return user;
   }
 
-  async findByid(userId: string) {
-    const pgClient = await connect();
+  async findByid(userId: string): Promise<IUser> {
+    const client = await pool.connect();
     const sql = `
       SELECT
         user_id "id",
@@ -90,16 +115,17 @@ class UsersRepository {
         user_id = $1
     `;
     const values = [ userId ];
-    const { rows } = await pgClient.query(sql, values);
+    const { rowCount, rows } = await client.query(sql, values);
+    const user: IUser = {};
+
+    if(!rowCount) return user;
 
     const [{ id, name, email, password }] = rows;
-
-    const user: IUser = {
-      id,
-      name,
-      email,
-      password,
-    };
+    
+    user.id = id;
+    user.name = name;
+    user.email = email;
+    user.password = password;
 
     return user;
   }

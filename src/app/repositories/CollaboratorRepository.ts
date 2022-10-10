@@ -1,8 +1,9 @@
-import connect from '../../config/database';
+import pool from '../../config/database';
+import { ICollaborators } from '../rules/rules';
 
 class CollaboratorRepository {
   async findByEmail(emailCollaborator: string, userId: string) {
-    const pgClient = await connect();
+    const client = await pool.connect();
     const sql = `
       SELECT 
         id "id",
@@ -18,17 +19,24 @@ class CollaboratorRepository {
         user_id LIKE $2
     `;
     const values = [ emailCollaborator, userId ];
-    const { rowCount, rows } = await pgClient.query(sql, values);
+    const { rowCount, rows } = await client.query(sql, values);
+    const collaborator: ICollaborators = {};
 
-    if(!rowCount) return null;
+    if(!rowCount) return collaborator;
 
-    const { id, name, email, password, user_id } = rows;
+    const [{ id, name, email, password }] = rows;
+    
+    collaborator.id = id;
+    collaborator.name = name;
+    collaborator.email = email;
+    collaborator.password = password;
+    collaborator.userId = userId;
 
-    return ({ id, name, email, password, user_id });
+    return collaborator;
   }
 
   async store(name: string, email: string, password: string, userId: string) {
-    const pgClient = await connect();
+    const pgClient = await pool.connect();
     const sql = `
       INSERT INTO 
         collaborators 
