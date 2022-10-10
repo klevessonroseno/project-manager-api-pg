@@ -22,22 +22,20 @@ class UsersResources {
       }
 
       const { name, email, password } = request.body;
-
-      const userExists = await usersRepository.checkIfUserExistsByEmail(email);
+      const userExists = await usersServices.checkIfUserExistsByEmail(email);
 
       if(userExists) return response.status(409).json({
         error: 'E-mail already registered.',
       });
       
-      const encryptPassword = await usersServices.encryptPassword(password);
-      const userCreated = await usersRepository.store(name, email, encryptPassword);
+      const userCreated = await usersServices.save(name, email, password);
 
       if(userCreated) return response.status(201).json({
         message: 'User registered successfully.',
       });
 
     } catch (error) {
-      response.status(500).json({ error });
+      response.status(500).json({ error: 'Something went wrong.' });
     }
   };
 

@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 export class User {
   private readonly id: string;
   private name: string;
@@ -7,11 +5,12 @@ export class User {
   private password: string;
 
   constructor(
+    id: string,
     name: string, 
     email: string, 
     password: string
   ) {
-    this.id = uuidv4();
+    this.id = id;
     this.name = name;
     this.email = email;
     this.password = password;

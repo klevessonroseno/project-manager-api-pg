@@ -1,21 +1,29 @@
 import pool from '../../config/database';
+import { User } from '../domain/User';
 import { IUser } from '../rules/rules';
 
 class UsersRepository {
-  async store(name: string, email: string, password: string): Promise<boolean> {
+  async save(user: User): Promise<boolean> {
+
+    const id = user.getId();
+    const name = user.getName();
+    const email = user.getEmail();
+    const password = user.getPassword(); 
+    
     const client = await pool.connect();
     const sql = `         
       INSERT INTO
-        users 
+        users_teste 
           (
+            user_id,
             user_name, 
             user_email, 
             user_password
           )
         VALUES
-          ($1, $2, $3)
+          ($1, $2, $3, $4)
     `;
-    const values = [ name, email, password ];
+    const values = [ id, name, email, password ];
     const { rowCount } = await client.query(sql, values);
     
     client.release();
