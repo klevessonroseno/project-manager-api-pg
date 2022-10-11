@@ -1,6 +1,3 @@
-import { Request } from 'express';
-import { SigningKeyCallback } from 'jsonwebtoken';
-
 export interface IUser {
   id?: string;
   name?: string;
@@ -16,12 +13,9 @@ export interface ICollaborators {
   userId?: string;
 }
 
-export interface IRequest extends Request {
-  userId?: string;
-  userName?: string;
-}
-
-export interface ISigningKeyCallback extends SigningKeyCallback {
-  userId?: string;
-  userName?: string;
+export interface TokenPayload {
+  userId: string;
+  userName: string;
+  iat: number;
+  ext: number;
 }
