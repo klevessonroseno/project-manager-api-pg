@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import usersRepository from '../repositories/usersRepository';
+import usersRepository from '../repositories/UsersRepository';
 import sessionsServices from '../services/SessionsServices';
 import { Request, Response } from 'express';
 
@@ -13,7 +13,7 @@ class SessionsResources {
 
       if(!(await schema.isValid(request.body))) {
         return response.status(400).json({
-          error: 'Validation fails.',
+          error: 'Validation failed.',
         });
       }
 
@@ -26,7 +26,7 @@ class SessionsResources {
         });
       }
 
-      const passwordsMatch = await sessionsServices.comparePasswords(password, user.password);
+      const passwordsMatch = await sessionsServices.comparePasswords(password, user.getPassword());
 
       if(!passwordsMatch) {
         return response.status(401).json({
@@ -39,7 +39,9 @@ class SessionsResources {
       return response.status(200).json({ token });
 
     } catch (error) {
-      response.status(500).json();
+      response.status(500).json({
+        error: 'Validation failed.',
+      });
     }
   }
 }

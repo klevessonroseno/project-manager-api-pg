@@ -2,7 +2,6 @@ import usersRepository from "../repositories/UsersRepository";
 import * as Yup from 'yup';
 import usersServices from "../services/UsersServices";
 import { Request, Response } from 'express';
-import { IRequest } from '../rules/rules';
 
 class UsersResources {
   async store(request: Request, response: Response) {
@@ -17,29 +16,40 @@ class UsersResources {
 
       if(!schemaIsValid) {
         return response.status(400).json({
-          error: 'Validation fails.'
+          error: 'Validation failed.',
         });
       }
 
       const { name, email, password } = request.body;
-      const userExists = await usersServices.checkIfUserExistsByEmail(email);
+      const userExists = await usersRepository.checkIfUserExistsByEmail(email);
 
       if(userExists) return response.status(409).json({
         error: 'E-mail already registered.',
       });
       
-      const userCreated = await usersServices.save(name, email, password);
+      const id = usersServices.generateUserId();
+      const encryptPassword = await usersServices.encryptPassword(password);
 
-      if(userCreated) return response.status(201).json({
-        message: 'User registered successfully.',
-      });
+      const userCreated = await usersRepository.save(
+        id,
+        name, 
+        email,
+        encryptPassword
+      );
 
+      if(userCreated) {
+        return response.status(201).json({
+          message: 'User registered successfully.',
+        });
+      }
     } catch (error) {
-      response.status(500).json({ error: 'Something went wrong.' });
+      response.status(500).json({ 
+        error: 'Something went wrong.',
+      });
     }
   };
 
-  async update(request: IRequest, response: Response) {
+  async update(request: Request, response: Response) {
     try {
       const schema = Yup.object().shape({
         name: Yup.string(),
@@ -67,23 +77,23 @@ class UsersResources {
       
       if(!schemaIsValid) {
         return response.status(400).json({
-          error: 'Validation Fails.',
+          error: 'Validation failed.',
         });
       }
   
       const { id } = request.body;
   
       if(id) return response.status(400).json({
-        error: 'Validation fails.',
+        error: 'Validation failed.',
       });
   
       const { userId } = request;
-      const user = await usersRepository.findByid(userId);
+      const user = await usersRepository.findById(userId);
       
       if(request.body.email) {
         let { email } = request.body;
 
-        if(email !== user.email) {
+        if(email !== user.getEmail()) {
           let userFound = await usersRepository.findByEmail(email);
 
           if(userFound) {
@@ -96,7 +106,7 @@ class UsersResources {
 
       if(request.body.oldPassword) {
         let { oldPassword } = request.body;
-        let { password } = user;
+        let password = user.getPassword();
         let passwordsMatch = await usersServices.comparePasswords(oldPassword, password);
   
         if(!passwordsMatch) {
@@ -119,7 +129,9 @@ class UsersResources {
         return response.status(204).json();
       }
     } catch (error) {
-      return response.status(500).json({ error });
+      return response.status(500).json({ 
+        error: 'Something went wrong.' 
+      });
     }
   }
 
@@ -133,7 +145,7 @@ class UsersResources {
 
       if(!schemaIsValid) {
         return response.status(400).json({
-          error: 'Validation fails.',
+          error: 'Validation failed.',
         });
       }
     } catch (error) {

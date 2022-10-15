@@ -7,6 +7,8 @@
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "db-migrate": "^0.11.13",
+    "db-migrate-pg": "^1.2.2",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
@@ -18,7 +20,16 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "build": "tsc",
-    "dev:server": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts"
+    "dev:server": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
+    "db-migrate:run:dev:config": "npx db-migrate up --config src/database/config/database.json -e dev",
+    "db-migrate:run:test:config": "npx db-migrate up --config src/database/config/database.json -e test",
+    "db-migrate:run:prod:config": "npx db-migrate up --config src/database/config/database.json -e prod",
+    "db-migrate:create:migration:dev": "npx db-migrate create -m src/database/migrations --sql-file --config src/database/config/database.json -e dev",
+    "db-migrate:create:migration:test": "npx db-migrate create -m src/database/migrations --sql-file --config src/database/config/database.json -e test",
+    "db-migrate:create:migration:prod": "npx db-migrate create -m src/database/migrations --sql-file --config src/database/config/database.json -e test",
+    "db-migrate:create:db:dev": "npx db-migrate db:create --config src/database/config/database.json -e dev",
+    "db-migrate:create:db:test": "npx db-migrate db:create --config src/database/config/database.json -e test",
+    "db-migrate:create:db:prod": "npx db-migrate db:create --config src/database/config/database.json -e prod"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

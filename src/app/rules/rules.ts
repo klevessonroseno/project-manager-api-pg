@@ -1,19 +1,4 @@
-export interface IUser {
-  id?: string;
-  name?: string;
-  email?: string;
-  password?: string;
-}
-
-export interface ICollaborators {
-  id?: string;
-  name?: string;
-  email?: string;
-  password?: string;
-  userId?: string;
-}
-
-export interface TokenPayload {
+export interface JwtPayloadToken {
   userId: string;
   userName: string;
   iat: number;
