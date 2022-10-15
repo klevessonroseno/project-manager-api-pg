@@ -1,5 +1,4 @@
 import pool from '../../config/database';
-import { ICollaborators } from '../rules/rules';
 
 class CollaboratorRepository {
   async findByEmail(emailCollaborator: string, userId: string) {
@@ -20,7 +19,7 @@ class CollaboratorRepository {
     `;
     const values = [ emailCollaborator, userId ];
     const { rowCount, rows } = await client.query(sql, values);
-    const collaborator: ICollaborators = {};
+    const collaborator = {};
 
     if(!rowCount) return collaborator;
 

@@ -29,7 +29,10 @@
     "db-migrate:create:migration:prod": "npx db-migrate create -m src/database/migrations --sql-file --config src/database/config/database.json -e test",
     "db-migrate:create:db:dev": "npx db-migrate db:create --config src/database/config/database.json -e dev",
     "db-migrate:create:db:test": "npx db-migrate db:create --config src/database/config/database.json -e test",
-    "db-migrate:create:db:prod": "npx db-migrate db:create --config src/database/config/database.json -e prod"
+    "db-migrate:create:db:prod": "npx db-migrate db:create --config src/database/config/database.json -e prod",
+    "db-migrate:up:dev": "npx db-migrate up --config src/database/config/database.json -e dev -m src/database/migrations",
+    "db-migrate:up:test": "npx db-migrate up --config src/database/config/database.json -e test -m src/database/migrations",
+    "db-migrate:up:prod": "npx db-migrate up --config src/database/config/database.json -e prod -m src/database/migrations"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
