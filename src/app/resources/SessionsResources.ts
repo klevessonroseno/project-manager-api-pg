@@ -7,39 +7,35 @@ class SessionsResources {
   async store(request: Request, response: Response) {
     try {
       const schema = Yup.object().shape({
-        email:  Yup.string().email().required(),
-        password: Yup.string().required(),
+        email:  Yup.string().email().required().max(200),
+        password: Yup.string().required().min(6).max(10),
       });
 
-      if(!(await schema.isValid(request.body))) {
-        return response.status(400).json({
+      const schemaIsValid = await schema.isValid(request.body);
+
+      if(!schemaIsValid) return response.status(400).json({
           error: 'Validation failed.',
-        });
-      }
+      });
 
       const { email, password } = request.body;
+      const userFoundByEmail = await usersRepository.checkIfUserExistsByEmail(email);
+
+      if(!userFoundByEmail) return response.status(401).json({
+          error: 'Invalid email or password.',
+      });
+
       const user = await usersRepository.findByEmail(email);
-
-      if(!user) {
-        return response.status(404).json({
-          error: 'Email not registered.',
-        });
-      }
-
       const passwordsMatch = await sessionsServices.comparePasswords(password, user.getPassword());
 
-      if(!passwordsMatch) {
-        return response.status(401).json({
-          error: 'Incorrect password.',
-        }); 
-      }
-
-      const token = sessionsServices.generateJwtToken(user);
-
+      if(!passwordsMatch) return response.status(401).json({
+          error: 'Invalid email or password.',
+      }); 
+      
+      const token = sessionsServices.generateUserJwtToken(user);
       return response.status(200).json({ token });
 
     } catch (error) {
-      response.status(500).json({
+      return response.status(500).json({
         error: 'Validation failed.',
       });
     }

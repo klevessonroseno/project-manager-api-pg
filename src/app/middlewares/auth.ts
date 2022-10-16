@@ -6,26 +6,23 @@ import { JwtPayloadToken } from '../rules/rules';
 export default async (request: Request, response: Response, next: NextFunction) => {
   const { authorization } = request.headers; 
 
-  if(!authorization) {
-    return response.status(400).json({
-      error: 'Request header does not contain authorization attribute.',
-    });
-  }
+  if(!authorization) return response.status(400).json({
+      error: 'Token not provided.',
+  });
 
   const [ , token ] = authorization.split(' ');
 
-  if(!token) {
-    return response.status(401).json({
+  if(!token) return response.status(401).json({
       error: 'Token not provided.',
-    });
-  }
+  });
 
   try {
     const decoded = jwt.verify(token, authConfig.secret);
-    const { userId, userName } = decoded as JwtPayloadToken;
+    const { userId, userName, userEmail } = decoded as JwtPayloadToken;
 
     request.userId = userId;
     request.userName = userName;
+    request.userEmail = userEmail;
 
     return next();
 

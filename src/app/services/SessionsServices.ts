@@ -1,17 +1,19 @@
 import { compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import authConfig from '../../config/auth';
+import { User } from '../domain/User';
 
 class SessionsServices {
-  async comparePasswords(password, encryptPassword) {
+  async comparePasswords(password: string, encryptPassword: string) {
     return await compare(password, encryptPassword);
   }
 
-  generateJwtToken(user) {
+  generateUserJwtToken(user: User) {
     const token = jwt.sign(
       { 
-        userId: user.id, 
-        userName: user.name,
+        userId: user.getId(), 
+        userName: user.getName(),
+        userEmail: user.getEmail(),
       },
       authConfig.secret,
       {

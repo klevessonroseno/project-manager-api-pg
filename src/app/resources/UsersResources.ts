@@ -7,27 +7,31 @@ class UsersResources {
   async store(request: Request, response: Response) {
     try {
       const schema = Yup.object().shape({
-        name: Yup.string().required(),
-        email: Yup.string().email().required(),
+        name: Yup.string().required().max(200),
+        email: Yup.string().email().required().max(200),
         password: Yup.string().required().min(6).max(10),
       });
 
       const schemaIsValid = await schema.isValid(request.body);
 
-      if(!schemaIsValid) {
-        return response.status(400).json({
+      if(!schemaIsValid) return response.status(400).json({
           error: 'Validation failed.',
-        });
-      }
-
+      });
+      
       const { name, email, password } = request.body;
-      const userExists = await usersRepository.checkIfUserExistsByEmail(email);
+      const userFoundByEmail = await usersRepository.checkIfUserExistsByEmail(email);
 
-      if(userExists) return response.status(409).json({
+      if(userFoundByEmail) return response.status(409).json({
         error: 'E-mail already registered.',
       });
       
       const id = usersServices.generateUserId();
+      const userFoundById = await usersRepository.checkIfUserExistsById(id);
+
+      if(userFoundById) return response.status(500).json({
+        error: 'Something went wrong. Please try again in a few minutes.',
+      });
+
       const encryptPassword = await usersServices.encryptPassword(password);
 
       const userCreated = await usersRepository.save(
@@ -37,14 +41,13 @@ class UsersResources {
         encryptPassword
       );
 
-      if(userCreated) {
-        return response.status(201).json({
+      if(userCreated) return response.status(201).json({
           message: 'User registered successfully.',
-        });
-      }
+      });
+    
     } catch (error) {
       response.status(500).json({ 
-        error: 'Something went wrong.',
+        error: 'Something went wrong. Please try again in a few minutes.',
       });
     }
   };
@@ -54,11 +57,11 @@ class UsersResources {
       const schema = Yup.object().shape({
         name: Yup.string(),
         email: Yup.string().email(),
-        oldPassword: Yup.string().min(6).max(10),
-        password: Yup.string().min(6).max(10).when(
-          'oldPassword', 
-          (oldPassword, field) => { 
-            return oldPassword 
+        password: Yup.string().min(6).max(10),
+        oldPassword: Yup.string().min(6).max(10).when(
+          'password', 
+          (password, field) => { 
+            return password 
               ? field.required() 
               : field; 
           }
@@ -75,11 +78,9 @@ class UsersResources {
   
       const schemaIsValid = await schema.isValid(request.body);
       
-      if(!schemaIsValid) {
-        return response.status(400).json({
+      if(!schemaIsValid) return response.status(400).json({
           error: 'Validation failed.',
-        });
-      }
+      });      
   
       const { id } = request.body;
   
@@ -88,19 +89,22 @@ class UsersResources {
       });
   
       const { userId } = request;
+
+      if(!userId) return response.status(400).json({
+        error: 'Validation faild.',        
+      });
+
       const user = await usersRepository.findById(userId);
       
       if(request.body.email) {
         let { email } = request.body;
 
         if(email !== user.getEmail()) {
-          let userFound = await usersRepository.findByEmail(email);
+          let userFoundByEmail = await usersRepository.checkIfUserExistsByEmail(email);
 
-          if(userFound) {
-            return response.status(409).json({
+          if(userFoundByEmail) return response.status(409).json({
               error: 'Email already registered by another user.',
-            });
-          }
+          });
         }
       }
 
@@ -129,8 +133,9 @@ class UsersResources {
         return response.status(204).json();
       }
     } catch (error) {
+      console.log(error)
       return response.status(500).json({ 
-        error: 'Something went wrong.' 
+        error: 'Something went wrong. Please try again in a few minutes.' 
       });
     }
   }

@@ -21,7 +21,7 @@
     "dev": "nodemon src/server.js",
     "build": "tsc",
     "dev:server": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
-    "db-migrate:run:dev:config": "npx db-migrate up --config src/database/config/database.json -e dev",
+    "db-migrate:run:dev:config": "npx db-migrate up --config src/database/config/database.json -e dev -m src/database/migrations",
     "db-migrate:run:test:config": "npx db-migrate up --config src/database/config/database.json -e test",
     "db-migrate:run:prod:config": "npx db-migrate up --config src/database/config/database.json -e prod",
     "db-migrate:create:migration:dev": "npx db-migrate create -m src/database/migrations --sql-file --config src/database/config/database.json -e dev",
