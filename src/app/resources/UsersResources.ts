@@ -94,13 +94,19 @@ class UsersResources {
         error: 'Validation faild.',        
       });
 
+      const userFoundById = await usersRepository.checkIfUserExistsById(userId);
+
+      if(!userFoundById) return response.status(400).json({
+        error: 'Validation faild.',        
+      });
+
       const user = await usersRepository.findById(userId);
       
       if(request.body.email) {
-        let { email } = request.body;
+        const { email } = request.body;
 
         if(email !== user.getEmail()) {
-          let userFoundByEmail = await usersRepository.checkIfUserExistsByEmail(email);
+          const userFoundByEmail = await usersRepository.checkIfUserExistsByEmail(email);
 
           if(userFoundByEmail) return response.status(409).json({
               error: 'Email already registered by another user.',
@@ -109,19 +115,17 @@ class UsersResources {
       }
 
       if(request.body.oldPassword) {
-        let { oldPassword } = request.body;
-        let password = user.getPassword();
-        let passwordsMatch = await usersServices.comparePasswords(oldPassword, password);
+        const { oldPassword } = request.body;
+        const password = user.getPassword();
+        const passwordsMatch = await usersServices.comparePasswords(oldPassword, password);
   
-        if(!passwordsMatch) {
-          return response.status(401).json({
+        if(!passwordsMatch) return response.status(401).json({
             error: 'Old password does not match the entered password.'
-          });
-        }
+        });
       }
   
       if(request.body.password) {
-        let { password } = request.body;
+        const { password } = request.body;
         request.body.password = await usersServices.encryptPassword(password);
       }
       
@@ -129,11 +133,9 @@ class UsersResources {
   
       const userUpdated = await usersRepository.update(user);
   
-      if(userUpdated) {
-        return response.status(204).json();
-      }
+      if(userUpdated) return response.status(204).json();
+
     } catch (error) {
-      console.log(error)
       return response.status(500).json({ 
         error: 'Something went wrong. Please try again in a few minutes.' 
       });

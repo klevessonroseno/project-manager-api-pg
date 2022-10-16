@@ -1,0 +1,8 @@
+CREATE TABLE collaborators(
+  id VARCHAR(200) NOT NULL UNIQUE,
+  name VARCHAR(200) NOT NULL,
+  email VARCHAR(200) NOT NULL UNIQUE,
+  password VARCHAR(200) NOT NULL,
+  user_id VARCHAR(200) NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users (id)
+);
