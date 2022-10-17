@@ -19,13 +19,14 @@ export default async (request: Request, response: Response, next: NextFunction) 
   try {
     const decoded = jwt.verify(token, authConfig.secret);
     const { managerId, managerName, managerEmail } = decoded as JwtPayloadToken;
-
-    request.manager.id = managerId;
-    request.manager.name = managerName;
-    request.manager.email = managerEmail;
+    
+    request.managerId = managerId;
+    request.managerName = managerName;
+    request.managerEmail = managerEmail;
 
     return next();
-
+    
+  
   } catch (error) {
     return response.status(401).json({
       error: 'Invalid token.',

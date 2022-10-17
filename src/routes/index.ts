@@ -1,10 +1,8 @@
 import { Router } from 'express';
-import publicRoutes from './public/routes';
-import privateRoutes from './private/routes';
+import managersRoutes from './managersRoutes/index';
 
 const routes = Router();
 
-routes.use(publicRoutes);
-routes.use(privateRoutes);
+routes.use(managersRoutes);
 
 export default routes;
