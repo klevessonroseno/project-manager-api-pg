@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import usersResources from '../../app/resources/UsersResources';
+import managersResources from '../../app/resources/ManagersResources';
 import sessionsResources from '../../app/resources/SessionsResources';
 
 const routes = Router();
 
-routes.post('/users', usersResources.store);
+routes.post('/managers', managersResources.store);
 
-routes.post('/users/sessions', sessionsResources.store);
+routes.post('/managers/sessions', sessionsResources.store);
 
-routes.post('/users/password/reset/', usersResources.resetPassword);
+routes.post('/managers/password/reset/', managersResources.resetPassword);
 
 export default routes;
