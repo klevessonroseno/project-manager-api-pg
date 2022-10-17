@@ -1,13 +1,9 @@
-import { compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import authConfig from '../../config/auth';
 import { User } from '../domain/User';
+import { Services } from './Services';
 
-class SessionsServices {
-  async comparePasswords(password: string, encryptPassword: string) {
-    return await compare(password, encryptPassword);
-  }
-
+class SessionsServices extends Services {
   generateUserJwtToken(user: User) {
     const token = jwt.sign(
       { 
