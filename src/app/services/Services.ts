@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { hash, compare } from 'bcrypt';
 
 export abstract class Services {
-  generateUserId(): string {
+  generateId(): string {
     return uuidv4();
   };
 

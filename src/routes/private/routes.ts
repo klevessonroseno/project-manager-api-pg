@@ -9,6 +9,8 @@ routes.use(authMiddleware);
 
 routes.put('/users', usersResources.update);
 
-routes.post('/users/collaborators', collaboratorsResources.store);
+routes.post('/collaborators', collaboratorsResources.store);
+
+routes.get('/collaborators', collaboratorsResources.find);
 
 export default routes;

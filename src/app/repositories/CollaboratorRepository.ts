@@ -17,7 +17,7 @@ class CollaboratorRepository {
     const sql = `
       INSERT INTO collaborators 
         (id, name, email, password, user_id) 
-      VALUES ($1, $2, $3, $4)
+      VALUES ($1, $2, $3, $4, $5)
     `;
     const values = [ id, name, email, password, userId ];
 
@@ -28,6 +28,15 @@ class CollaboratorRepository {
     if(rowCount && rowCount !== 0) return true;
 
     return false;
+  }
+
+  async findAll(userId: string)/*: Promise<Collaborator[]>*/ {
+    const client = await pool.connect();
+    const sql = `SELECT * FROM collaborators WHERE user_id LIKE $1`;
+    const values = [ userId ];
+    const { rows } = await client.query(sql, values);
+
+    return rows;
   }
 }
 
