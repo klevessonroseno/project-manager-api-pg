@@ -1,6 +1,6 @@
 declare namespace Express {
   interface Request {
-    user: {
+    manager: {
       id: string;
       name: string;
       email: string;

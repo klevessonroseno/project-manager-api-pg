@@ -1,55 +1,20 @@
-import { v4 as uuidv4 } from "uuid";
+import { User } from "./User";
 
-export class Collaborator {
-  private readonly id: string; 
-  private name: string; 
-  private email: string; 
-  private password: string; 
-  private readonly userId: string;
+export class Collaborator extends User {
+  private readonly managerId: string;
 
-  constructor( 
-    id: string,
+  constructor(
+    id: string, 
     name: string, 
     email: string, 
     password: string, 
-    userId: string,
+    managerId: string,
   ) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.userId = userId;
+    super(id, name, email, password);
+    this.managerId = managerId;
   }
 
-  public getId(): string {
-    return this.id;
-  }
-
-  public getName(): string {
-    return this.name;
-  }
-
-  public setName(name: string): void {
-    this.name = name;
-  }
-
-  public getEmail(): string {
-    return this.email;
-  }
-
-  public setEmail(email: string): void {
-    this.email = email;
-  }
-
-  public getPassword(): string {
-    return this.password;
-  }
-
-  public setPassword(password: string): void {
-    this.password = password;
-  }
-
-  public getUserId(): string {
-    return this.userId;
+  public getManagerId(): string {
+    return this.managerId;
   }
 }

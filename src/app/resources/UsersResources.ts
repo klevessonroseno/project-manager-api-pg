@@ -1,9 +1,9 @@
-import usersRepository from "../repositories/UsersRepository";
 import * as Yup from 'yup';
-import usersServices from "../services/UsersServices";
 import { Request, Response } from 'express';
+import managersRepository from "../repositories/ManagersRepository";
+import managersServices from "../services/ManagersServices";
 
-class UsersResources {
+class ManagersResources {
   async store(request: Request, response: Response) {
     try {
       const schema = Yup.object().shape({
@@ -19,30 +19,30 @@ class UsersResources {
       });
       
       const { name, email, password } = request.body;
-      const userFoundByEmail = await usersRepository.checkIfUserExistsByEmail(email);
+      const managerFoundByEmail = await managersRepository.checkIfManagerExistsByEmail(email);
 
-      if(userFoundByEmail) return response.status(409).json({
+      if(managerFoundByEmail) return response.status(409).json({
         error: 'E-mail already registered.',
       });
       
-      const id = usersServices.generateId();
-      const userFoundById = await usersRepository.checkIfUserExistsById(id);
+      const id = managersServices.generateId();
+      const managerFoundById = await managersRepository.checkIfManagerExistsById(id);
 
-      if(userFoundById) return response.status(500).json({
+      if(managerFoundById) return response.status(500).json({
         error: 'Something went wrong. Please try again in a few minutes.',
       });
 
-      const encryptPassword = await usersServices.encryptPassword(password);
+      const encryptPassword = await managersServices.encryptPassword(password);
 
-      const userCreated = await usersRepository.save(
+      const managerCreated = await managersRepository.save(
         id,
         name, 
         email,
         encryptPassword
       );
 
-      if(userCreated) return response.status(201).json({
-          message: 'User registered successfully.',
+      if(managerCreated) return response.status(201).json({
+          message: 'Registered successfully.',
       });
     
     } catch (error) {
@@ -88,36 +88,36 @@ class UsersResources {
         error: 'Validation failed.',
       });
   
-      const userId = request.user.id;
+      const managerId = request.manager.id;
 
-      if(!userId) return response.status(400).json({
+      if(!managerId) return response.status(400).json({
         error: 'Validation faild.',        
       });
 
-      const userFoundById = await usersRepository.checkIfUserExistsById(userId);
+      const managerFoundById = await managersRepository.checkIfManagerExistsById(managerId);
 
-      if(!userFoundById) return response.status(400).json({
+      if(!managerFoundById) return response.status(400).json({
         error: 'Validation faild.',        
       });
 
-      const user = await usersRepository.findById(userId);
+      const manager = await managersRepository.findById(managerId);
       
       if(request.body.email) {
         const { email } = request.body;
 
-        if(email !== user.getEmail()) {
-          const userFoundByEmail = await usersRepository.checkIfUserExistsByEmail(email);
+        if(email !== manager.getEmail()) {
+          const managerFoundByEmail = await managersRepository.checkIfManagerExistsByEmail(email);
 
-          if(userFoundByEmail) return response.status(409).json({
-              error: 'Email already registered by another user.',
+          if(managerFoundByEmail) return response.status(409).json({
+              error: 'Email already registered by another Manager.',
           });
         }
       }
 
       if(request.body.oldPassword) {
         const { oldPassword } = request.body;
-        const password = user.getPassword();
-        const passwordsMatch = await usersServices.comparePasswords(oldPassword, password);
+        const password = manager.getPassword();
+        const passwordsMatch = await managersServices.comparePasswords(oldPassword, password);
   
         if(!passwordsMatch) return response.status(401).json({
             error: 'Old password does not match the entered password.'
@@ -126,14 +126,14 @@ class UsersResources {
   
       if(request.body.password) {
         const { password } = request.body;
-        request.body.password = await usersServices.encryptPassword(password);
+        request.body.password = await managersServices.encryptPassword(password);
       }
       
-      Object.assign(user, request.body);
+      Object.assign(manager, request.body);
   
-      const userUpdated = await usersRepository.update(user);
+      const managerUpdated = await managersRepository.update(manager);
   
-      if(userUpdated) return response.status(204).json();
+      if(managerUpdated) return response.status(204).json();
 
     } catch (error) {
       return response.status(500).json({ 
@@ -161,4 +161,4 @@ class UsersResources {
   }
 }
 
-export default new UsersResources();
+export default new ManagersResources();

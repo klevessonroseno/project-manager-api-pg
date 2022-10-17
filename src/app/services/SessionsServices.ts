@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken';
 import authConfig from '../../config/auth';
-import { User } from '../domain/User';
+import { Manager } from '../domain/Manager';
 import { Services } from './Services';
 
 class SessionsServices extends Services {
-  generateUserJwtToken(user: User) {
+  generateManagerJwtToken(manager: Manager) {
     const token = jwt.sign(
       { 
-        userId: user.getId(), 
-        userName: user.getName(),
-        userEmail: user.getEmail(),
+        userId: manager.getId(), 
+        userName: manager.getName(),
+        userEmail: manager.getEmail(),
       },
       authConfig.secret,
       {

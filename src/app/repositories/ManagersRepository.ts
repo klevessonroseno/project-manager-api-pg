@@ -1,11 +1,17 @@
 import pool from '../../config/database';
-import { User } from '../domain/User';
+import { Manager } from '../domain/Manager';
 
-class UsersRepository {
-  async save(id: string, name: string, email: string, password: string): Promise<boolean> { 
+class ManagersRepository {
+
+  async save(
+    id: string, 
+    name: string, 
+    email: string, 
+    password: string
+  ): Promise<boolean> {
     const client = await pool.connect();
     const sql = `         
-      INSERT INTO users 
+      INSERT INTO managers 
         (id, name, email, password)
       VALUES
         ($1, $2, $3, $4)
@@ -20,17 +26,17 @@ class UsersRepository {
     return false;
   }
 
-  async update(user: User): Promise<boolean> {
-    const id = user.getId();
-    const name = user.getName();
-    const email = user.getEmail();
-    const password = user.getPassword();
+  async update(manager: Manager): Promise<boolean> {
+    const id = manager.getId();
+    const name = manager.getName();
+    const email = manager.getEmail();
+    const password = manager.getPassword();
 
     const client = await pool.connect();
     const values = [ name, email, password, id ];
 
     const sql = `
-      UPDATE users 
+      UPDATE managers 
       SET name = $1, email = $2, password = $3 
       WHERE id LIKE $4
     `;
@@ -43,9 +49,9 @@ class UsersRepository {
     return false;
   }
 
-  async checkIfUserExistsByEmail(email: string): Promise<boolean> {
+  async checkIfManagerExistsByEmail(email: string): Promise<boolean> {
     const client = await pool.connect();
-    const sql = `SELECT email FROM users WHERE email LIKE $1`;
+    const sql = `SELECT email FROM managers WHERE email LIKE $1`;
     const values = [ email ];
     const { rowCount } = await client.query(sql, values);
     
@@ -56,9 +62,9 @@ class UsersRepository {
     return false;
   }
 
-  async checkIfUserExistsById(id: string): Promise<boolean> {
+  async checkIfManagerExistsById(id: string): Promise<boolean> {
     const client = await pool.connect();
-    const sql = `SELECT id FROM users WHERE id LIKE $1`;
+    const sql = `SELECT id FROM managers WHERE id LIKE $1`;
     const values = [ id ];
     const { rowCount } = await client.query(sql, values);
     
@@ -69,7 +75,7 @@ class UsersRepository {
     return false;
   }
 
-  async findByEmail(userEmail: string): Promise<User> {
+  async findByEmail(userEmail: string): Promise<Manager> {
     const client = await pool.connect();
     const sql = `SELECT * FROM users WHERE email LIKE $1`;
     const values = [ userEmail ];
@@ -78,10 +84,10 @@ class UsersRepository {
     
     client.release();
 
-    return new User(id, name, email, password);
+    return new Manager(id, name, email, password);
   }
 
-  async findById(userId: string): Promise<User> {
+  async findById(userId: string): Promise<Manager> {
     const client = await pool.connect();
     const sql = `SELECT * FROM users WHERE id LIKE $1`;
     const values = [ userId ];
@@ -91,8 +97,8 @@ class UsersRepository {
 
     client.release();
 
-    return new User(id, name, email, password);
+    return new Manager(id, name, email, password);
   }
 }
 
-export default new UsersRepository();
+export default new ManagersRepository();

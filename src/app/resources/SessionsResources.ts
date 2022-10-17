@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import usersRepository from '../repositories/UsersRepository';
+import managersRepository from '../repositories/ManagersRepository';
 import sessionsServices from '../services/SessionsServices';
 import { Request, Response } from 'express';
 
@@ -18,20 +18,20 @@ class SessionsResources {
       });
 
       const { email, password } = request.body;
-      const userFoundByEmail = await usersRepository.checkIfUserExistsByEmail(email);
+      const managerFoundByEmail = await managersRepository.checkIfManagerExistsByEmail(email);
 
-      if(!userFoundByEmail) return response.status(401).json({
+      if(!managerFoundByEmail) return response.status(401).json({
           error: 'Invalid email or password.',
       });
 
-      const user = await usersRepository.findByEmail(email);
-      const passwordsMatch = await sessionsServices.comparePasswords(password, user.getPassword());
+      const manager = await managersRepository.findByEmail(email);
+      const passwordsMatch = await sessionsServices.comparePasswords(password, manager.getPassword());
 
       if(!passwordsMatch) return response.status(401).json({
           error: 'Invalid email or password.',
       }); 
       
-      const token = sessionsServices.generateUserJwtToken(user);
+      const token = sessionsServices.generateManagerJwtToken(manager);
       return response.status(200).json({ token });
 
     } catch (error) {
