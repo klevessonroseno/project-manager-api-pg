@@ -1,7 +1,7 @@
 export interface JwtPayloadToken {
-  userId: string;
-  userName: string;
-  userEmail: string;
+  managerId: string;
+  managerName: string;
+  managerEmail: string;
   iat: number;
   ext: number;
 }

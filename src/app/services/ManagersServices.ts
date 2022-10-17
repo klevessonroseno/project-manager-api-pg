@@ -1,5 +1,5 @@
 import { Services } from "./Services";
 
-class UsersServices extends Services {}
+class ManagersServices extends Services {}
 
-export default new UsersServices();
+export default new ManagersServices();

@@ -75,10 +75,10 @@ class ManagersRepository {
     return false;
   }
 
-  async findByEmail(userEmail: string): Promise<Manager> {
+  async findByEmail(managerEmail: string): Promise<Manager> {
     const client = await pool.connect();
-    const sql = `SELECT * FROM users WHERE email LIKE $1`;
-    const values = [ userEmail ];
+    const sql = `SELECT * FROM managers WHERE email LIKE $1`;
+    const values = [ managerEmail ];
     const { rows } = await client.query(sql, values);
     const [{ id, name, email, password }] = rows;
     
@@ -87,10 +87,10 @@ class ManagersRepository {
     return new Manager(id, name, email, password);
   }
 
-  async findById(userId: string): Promise<Manager> {
+  async findById(managerId: string): Promise<Manager> {
     const client = await pool.connect();
-    const sql = `SELECT * FROM users WHERE id LIKE $1`;
-    const values = [ userId ];
+    const sql = `SELECT * FROM managers WHERE id LIKE $1`;
+    const values = [ managerId ];
     const { rows } = await client.query(sql, values);
 
     const [{ id, name, email, password }] = rows;
