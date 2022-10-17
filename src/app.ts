@@ -1,13 +1,11 @@
 import express, { Express } from 'express';
-import publicRoutes from './routes/public/routes';
-import privateRoutes from './routes/private/routes';
+import routes from './routes/index';
 
 class App {
-  private server: Express;
+  private readonly server: Express;
 
   constructor() {
-    this.server = express();
-    
+    this.server = express(); 
     this.middlewares();
     this.routes()
   }
@@ -21,8 +19,7 @@ class App {
   }
 
   routes() {
-    this.server.use(publicRoutes);
-    this.server.use(privateRoutes);
+    this.server.use(routes);
   }
 }
 

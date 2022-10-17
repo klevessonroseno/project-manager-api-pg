@@ -4,7 +4,7 @@ import collaboratorsServices from '../services/CollaboratorsServices';
 
 class CollaboratorsResources {
   async store(request: Request, response: Response) {
-    const { userId } = request;
+    const userId = request.user.id;
     const { name, email, password } = request.body;
     const id = collaboratorsServices.generateId();
     const result = await collaboratorRepository.save(id, name, email, password, userId);
@@ -13,7 +13,7 @@ class CollaboratorsResources {
   }
 
   async find(request: Request, response: Response) {
-    const { userId } = request;
+    const userId = request.user.id;
     const collaborators = await collaboratorRepository.findAll(userId);
     return response.status(200).json(collaborators);
   }

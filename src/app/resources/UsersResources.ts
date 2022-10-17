@@ -25,7 +25,7 @@ class UsersResources {
         error: 'E-mail already registered.',
       });
       
-      const id = usersServices.generateUserId();
+      const id = usersServices.generateId();
       const userFoundById = await usersRepository.checkIfUserExistsById(id);
 
       if(userFoundById) return response.status(500).json({
@@ -88,7 +88,7 @@ class UsersResources {
         error: 'Validation failed.',
       });
   
-      const { userId } = request;
+      const userId = request.user.id;
 
       if(!userId) return response.status(400).json({
         error: 'Validation faild.',        

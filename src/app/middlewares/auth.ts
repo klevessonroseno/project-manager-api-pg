@@ -20,9 +20,9 @@ export default async (request: Request, response: Response, next: NextFunction) 
     const decoded = jwt.verify(token, authConfig.secret);
     const { userId, userName, userEmail } = decoded as JwtPayloadToken;
 
-    request.userId = userId;
-    request.userName = userName;
-    request.userEmail = userEmail;
+    request.user.id = userId;
+    request.user.name = userName;
+    request.user.email = userEmail;
 
     return next();
 
