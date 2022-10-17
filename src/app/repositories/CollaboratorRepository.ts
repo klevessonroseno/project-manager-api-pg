@@ -1,53 +1,33 @@
 import pool from '../../config/database';
+import { Collaborator } from '../domain/Collaborator';
 
 class CollaboratorRepository {
   async findByEmail(emailCollaborator: string, userId: string) {
     const client = await pool.connect();
-    const sql = `
-      SELECT 
-        id "id",
-        name "name",
-        email "email",
-        password "password",
-        user_id "user_id"
-      FROM 
-        collaborators 
-      WHERE 
-        email LIKE $1
-      AND
-        user_id LIKE $2
-    `;
+    const sql = `SELECT * FROM collaborators WHERE email LIKE $1 AND user_id LIKE $2`;
     const values = [ emailCollaborator, userId ];
-    const { rowCount, rows } = await client.query(sql, values);
-    const collaborator = {};
-
-    if(!rowCount) return collaborator;
-
-    const [{ id, name, email, password }] = rows;
+    const { rows } = await client.query(sql, values);
+    const [{ id, name, email, password, user_id }] = rows;
     
-    collaborator.id = id;
-    collaborator.name = name;
-    collaborator.email = email;
-    collaborator.password = password;
-    collaborator.userId = userId;
-
-    return collaborator;
+   return new Collaborator(id, name, email, password, user_id);
   }
 
-  async store(name: string, email: string, password: string, userId: string) {
-    const pgClient = await pool.connect();
+  async save(id: string, name: string, email: string, password: string, userId: string): Promise<boolean> {
+    const client = await pool.connect();
     const sql = `
-      INSERT INTO 
-        collaborators 
-        (name, email, password, user_id) 
-      VALUES 
-        ($1, $2, $3, $4)
+      INSERT INTO collaborators 
+        (id, name, email, password, user_id) 
+      VALUES ($1, $2, $3, $4)
     `;
-    const values = [ name, email, password, userId ];
+    const values = [ id, name, email, password, userId ];
 
-    const { rowCount } = await pgClient.query(sql, values);
+    const { rowCount } = await client.query(sql, values);
+    
+    client.release();
 
-    return rowCount;
+    if(rowCount && rowCount !== 0) return true;
+
+    return false;
   }
 }
 

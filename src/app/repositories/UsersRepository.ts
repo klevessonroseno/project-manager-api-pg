@@ -76,6 +76,8 @@ class UsersRepository {
     const { rows } = await client.query(sql, values);
     const [{ id, name, email, password }] = rows;
     
+    client.release();
+
     return new User(id, name, email, password);
   }
 
@@ -86,6 +88,8 @@ class UsersRepository {
     const { rows } = await client.query(sql, values);
 
     const [{ id, name, email, password }] = rows;
+
+    client.release();
 
     return new User(id, name, email, password);
   }
