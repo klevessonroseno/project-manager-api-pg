@@ -46,7 +46,7 @@ class ManagersResources {
       });
     
     } catch (error) {
-      response.status(500).json({ 
+      return response.status(500).json({ 
         error: 'Something went wrong. Please try again in a few minutes.',
       });
     }

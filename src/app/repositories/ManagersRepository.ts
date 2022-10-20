@@ -2,12 +2,13 @@ import pool from '../../config/database';
 import { Manager } from '../domain/Manager';
 
 class ManagersRepository {
-
   async save(
+
     id: string, 
     name: string, 
     email: string, 
     password: string
+    
   ): Promise<boolean> {
     const client = await pool.connect();
     const sql = `         
