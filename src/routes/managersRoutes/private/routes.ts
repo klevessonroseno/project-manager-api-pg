@@ -11,6 +11,6 @@ router.put('/managers', managersResources.update);
 
 router.post('/managers/collaborators', collaboratorsResources.store);
 
-router.get('/managers/collaborators', collaboratorsResources.find);
+router.get('/managers/collaborators', collaboratorsResources.findAll);
 
 export default router;

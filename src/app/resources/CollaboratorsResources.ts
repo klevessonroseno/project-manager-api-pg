@@ -73,7 +73,7 @@ class CollaboratorsResources {
     }
   }
 
-  async find(request: Request, response: Response) {
+  async findAll(request: Request, response: Response) {
     const managerId = request.managerId;
     
     const collaboratorsExists = await collaboratorsRepository

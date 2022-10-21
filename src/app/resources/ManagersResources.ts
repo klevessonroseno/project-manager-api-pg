@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { Request, Response } from 'express';
 import managersRepository from "../repositories/ManagersRepository";
 import managersServices from "../services/ManagersServices";
+import { EmailSender } from '../services/email/EmailSender';
 
 class ManagersResources {
   async store(request: Request, response: Response) {
@@ -155,16 +156,52 @@ class ManagersResources {
   async resetPassword(request: Request, response: Response) {
     try {
       const schema = Yup.object().shape({
-        email: Yup.string().email(),
+        email: Yup.string().email().required().max(200),
       });
 
       const schemaIsValid = await schema.isValid(request.body);
 
-      if(!schemaIsValid) {
-        return response.status(400).json({
+      if(!schemaIsValid) return response.status(400).json({
           error: 'Validation failed.',
+      });
+
+      const { email }: { email: string } = request.body;
+
+      const managerFoundByEmail = await managersRepository
+        .checkIfManagerExistsByEmail(email);
+      
+      if(!managerFoundByEmail) return response.status(404).json({
+        error: 'Email not registered.',
+      });
+
+      const manager = await managersRepository.findByEmail(email);
+      const newPassword = managersServices.generatePassword();
+      const newPasswordEncrypted = managersServices.encryptPassword(newPassword);
+
+      manager.setPassword(await newPasswordEncrypted);
+
+      const managerUpdated = await managersRepository.update(manager);
+
+      if(managerUpdated) {
+
+        const managerEmail = manager.getEmail();
+        const title = 'Email atualizado.';
+        const [ managerFirstName ] = manager.getName().split(' ');
+        const message = `${ managerFirstName }, sua nova senha é ${newPassword}`;
+        
+        const emailSender = new EmailSender(
+          managerEmail,
+          title,
+          message
+        );
+
+        emailSender.sendEmail();
+
+        return response.status(200).json({
+          message: 'Password successfully updated.',
         });
       }
+
     } catch (error) {
       return response.status(500).json({ error });
     }

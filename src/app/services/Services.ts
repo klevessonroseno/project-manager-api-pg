@@ -13,4 +13,8 @@ export abstract class Services {
   async comparePasswords(password: string, encryptPassword: string): Promise<boolean> {
     return await compare(password, encryptPassword);
   }
+
+  generatePassword(): string {
+    return Math.random().toString(36).slice(-8);
+  }
 }
