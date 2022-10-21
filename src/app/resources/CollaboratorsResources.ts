@@ -45,9 +45,13 @@ class CollaboratorsResources {
         managerId
       );
   
-      if(collaboratorCreated) return response.status(201).json({
-        message: 'Registered successfully.',
-      });
+      if(collaboratorCreated) {
+        // AQUI UM EMAIL SERÁ ENVIADO AO COLABORADOR CONTENDO A SENHA E O LINK
+        // PARA ELE FAZER LOGIN E ALTERAR A SUA SENHA NA PLATAFORMA
+        return response.status(201).json({
+          message: 'Registered successfully.',
+        });
+      }
 
     } catch (error) {
       return response.status(500).json({ 
