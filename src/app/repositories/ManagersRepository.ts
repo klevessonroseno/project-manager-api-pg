@@ -1,6 +1,13 @@
 import pool from '../../config/database';
 import { Manager } from '../domain/Manager';
 
+type data = [{ 
+  id: string, 
+  name: string, 
+  email: string, 
+  password: string,  
+}];
+
 class ManagersRepository {
   async save(
 
@@ -77,11 +84,15 @@ class ManagersRepository {
   }
 
   async findByEmail(managerEmail: string): Promise<Manager> {
+
     const client = await pool.connect();
+
     const sql = `SELECT * FROM managers WHERE email LIKE $1`;
+
     const values = [ managerEmail ];
+    
     const { rows } = await client.query(sql, values);
-    const [{ id, name, email, password }] = rows;
+    const [{ id, name, email, password }] = rows as data;
     
     client.release();
 
@@ -94,7 +105,7 @@ class ManagersRepository {
     const values = [ managerId ];
     const { rows } = await client.query(sql, values);
 
-    const [{ id, name, email, password }] = rows;
+    const [{ id, name, email, password }] = rows as data;
 
     client.release();
 

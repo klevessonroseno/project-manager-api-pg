@@ -6,15 +6,15 @@ export abstract class Services {
     return uuidv4();
   };
 
+  generatePassword(): string {
+    return Math.random().toString(36).slice(-8);
+  }
+
   async encryptPassword(password: string): Promise<string> {
     return await hash(password, 12);
   }
 
   async comparePasswords(password: string, encryptPassword: string): Promise<boolean> {
     return await compare(password, encryptPassword);
-  }
-
-  generatePassword(): string {
-    return Math.random().toString(36).slice(-8);
   }
 }

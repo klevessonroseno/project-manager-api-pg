@@ -139,7 +139,7 @@ class ManagersResources {
         const { password }: { password: string } = request.body;
         request.body.password = await managersServices.encryptPassword(password);
       }
-      
+
       Object.assign(manager, request.body);
   
       const managerUpdated = await managersRepository.update(manager);
@@ -184,15 +184,18 @@ class ManagersResources {
 
       if(managerUpdated) {
 
-        const managerEmail = manager.getEmail();
-        const title = 'Email atualizado.';
         const [ managerFirstName ] = manager.getName().split(' ');
-        const message = `${ managerFirstName }, sua nova senha é ${newPassword}`;
+        
+        const emailData = {
+          email: manager.getEmail(),
+          title: 'Email atualizado',
+          massage: `${ managerFirstName }, sua nova senha é ${newPassword}`,
+        }
         
         const emailSender = new EmailSender(
-          managerEmail,
-          title,
-          message
+          emailData.email,
+          emailData.title,
+          emailData.massage,
         );
 
         emailSender.sendEmail();
@@ -200,6 +203,7 @@ class ManagersResources {
         return response.status(200).json({
           message: 'Password successfully updated.',
         });
+        
       }
 
     } catch (error) {
