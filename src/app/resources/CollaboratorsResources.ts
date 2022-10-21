@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import collaboratorsServices from '../services/CollaboratorsServices';
 import { EmailSender } from '../services/email/EmailSender';
 import * as Yup from 'yup';
+import { ICollaborator } from '../rules/rules';
 
 class CollaboratorsResources {
   async store(request: Request, response: Response) {
@@ -18,7 +19,7 @@ class CollaboratorsResources {
         error: 'Bad Request.'
       });
   
-      const { name, email } = request.body;
+      const { name, email }: ICollaborator = request.body;
       const { managerId } = request;
   
       const collaboratorsFoundByEmail = await collaboratorsRepository
@@ -47,11 +48,16 @@ class CollaboratorsResources {
       );
   
       if(collaboratorCreated) {
+        const collaborator = await collaboratorsRepository
+          .findByEmail(email, managerId);
         
+        const collaboratorEmail = collaborator.getEmail();
+        const [ collaboratorFirstName ] = collaborator.getName().split(' ');
+
         const emailSender = new EmailSender(
-          email,
+          collaboratorEmail,
           'Cadastro Realizado.',
-          `A sua senha é ${password}.`
+          `${collaboratorFirstName}, a sua senha é ${password}.`
         );
 
         emailSender.sendEmail();

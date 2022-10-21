@@ -6,6 +6,14 @@ export interface JwtPayloadToken {
   ext: number;
 }
 
+export interface ICollaborator {
+  id?: string;
+  name: string;
+  email: string;
+  password?: string;
+  managerId?: string;
+}
+
 export interface IEmailData {
   from?: string,
   to?: string,
