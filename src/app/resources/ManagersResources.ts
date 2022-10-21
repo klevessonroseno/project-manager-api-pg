@@ -18,15 +18,22 @@ class ManagersResources {
           error: 'Validation failed.',
       });
       
-      const { name, email, password } = request.body;
-      const managerFoundByEmail = await managersRepository.checkIfManagerExistsByEmail(email);
+      const { name, email, password }: {
+        name: string,
+        email: string,
+        password: string,
+      } = request.body;
+
+      const managerFoundByEmail = await managersRepository
+        .checkIfManagerExistsByEmail(email);
 
       if(managerFoundByEmail) return response.status(409).json({
         error: 'E-mail already registered.',
       });
       
       const id = managersServices.generateId();
-      const managerFoundById = await managersRepository.checkIfManagerExistsById(id);
+      const managerFoundById = await managersRepository
+        .checkIfManagerExistsById(id);
 
       if(managerFoundById) return response.status(500).json({
         error: 'Something went wrong. Please try again in a few minutes.',
@@ -94,7 +101,8 @@ class ManagersResources {
         error: 'Validation faild.',        
       });
 
-      const managerFoundById = await managersRepository.checkIfManagerExistsById(managerId);
+      const managerFoundById = await managersRepository
+        .checkIfManagerExistsById(managerId);
 
       if(!managerFoundById) return response.status(400).json({
         error: 'Validation faild.',        
@@ -103,10 +111,11 @@ class ManagersResources {
       const manager = await managersRepository.findById(managerId);
       
       if(request.body.email) {
-        const { email } = request.body;
+        const { email }: { email: string } = request.body;
 
         if(email !== manager.getEmail()) {
-          const managerFoundByEmail = await managersRepository.checkIfManagerExistsByEmail(email);
+          const managerFoundByEmail = await managersRepository
+            .checkIfManagerExistsByEmail(email);
 
           if(managerFoundByEmail) return response.status(409).json({
               error: 'Email already registered by another Manager.',
@@ -115,9 +124,10 @@ class ManagersResources {
       }
 
       if(request.body.oldPassword) {
-        const { oldPassword } = request.body;
+        const { oldPassword }: { oldPassword: string } = request.body;
         const password = manager.getPassword();
-        const passwordsMatch = await managersServices.comparePasswords(oldPassword, password);
+        const passwordsMatch = await managersServices
+          .comparePasswords(oldPassword, password);
   
         if(!passwordsMatch) return response.status(401).json({
             error: 'Old password does not match the entered password.'
@@ -125,7 +135,7 @@ class ManagersResources {
       }
   
       if(request.body.password) {
-        const { password } = request.body;
+        const { password }: { password: string } = request.body;
         request.body.password = await managersServices.encryptPassword(password);
       }
       

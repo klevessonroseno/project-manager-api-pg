@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import collaboratorsServices from '../services/CollaboratorsServices';
 import { EmailSender } from '../services/email/EmailSender';
 import * as Yup from 'yup';
-import { ICollaborator } from '../rules/rules';
 
 class CollaboratorsResources {
   async store(request: Request, response: Response) {
@@ -19,7 +18,7 @@ class CollaboratorsResources {
         error: 'Bad Request.'
       });
   
-      const { name, email }: ICollaborator = request.body;
+      const { name, email }: { name: string, email: string } = request.body;
       const { managerId } = request;
   
       const collaboratorsFoundByEmail = await collaboratorsRepository
@@ -76,7 +75,6 @@ class CollaboratorsResources {
 
   async find(request: Request, response: Response) {
     const managerId = request.managerId;
-    const collaborators = await collaboratorsRepository.findAll(managerId);
     
     const collaboratorsExists = await collaboratorsRepository
       .checkIfCollaboratorsExists(managerId);
@@ -85,12 +83,16 @@ class CollaboratorsResources {
       error: 'No collaborator registered.',
     });
 
+    const collaborators = await collaboratorsRepository.findAll(managerId);
+
     const data = collaborators.map(collaborator => {
+
       const id = collaborator.getId();
       const name = collaborator.getName();
       const email = collaborator.getEmail();
 
       return ({ id, name, email });
+
     });
 
     return response.status(200).json(data);
