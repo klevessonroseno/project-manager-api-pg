@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { EmailConfig } from '../../../config/email';
+import { EmailConfig } from '../../../config/EmailConfig';
 
 config();
 
@@ -8,8 +8,8 @@ export class EmailSender extends EmailConfig {
     super(sendTo, title, text);
   }  
   
-  sendEmail(){
-    this.transporter.sendMail(this.mailOptions, (error, info) => {
+  sendEmail(): void {
+    this.getTransporter().sendMail(this.getMailOptions(), (error, info) => {
       if (error) {
         console.log(error);
       } else {

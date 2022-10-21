@@ -1,6 +1,7 @@
 import collaboratorsRepository from '../repositories/CollaboratorsRepository';
 import { Request, Response } from 'express';
 import collaboratorsServices from '../services/CollaboratorsServices';
+import { EmailSender } from '../services/email/EmailSender';
 import * as Yup from 'yup';
 
 class CollaboratorsResources {
@@ -46,8 +47,15 @@ class CollaboratorsResources {
       );
   
       if(collaboratorCreated) {
-        // AQUI UM EMAIL SERÁ ENVIADO AO COLABORADOR CONTENDO A SENHA E O LINK
-        // PARA ELE FAZER LOGIN E ALTERAR A SUA SENHA NA PLATAFORMA
+        
+        const emailSender = new EmailSender(
+          email,
+          'Cadastro Realizado.',
+          `A sua senha é ${password}.`
+        );
+
+        emailSender.sendEmail();
+
         return response.status(201).json({
           message: 'Registered successfully.',
         });
