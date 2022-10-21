@@ -61,6 +61,19 @@ class CollaboratorRepository {
     return false;
   }
 
+  async checkIfCollaboratorsExists(managerId: string): Promise<boolean>{
+    const client = await pool.connect();
+    const sql = `SELECT * FROM collaborators WHERE manager_id LIKE $1`;
+    const values = [ managerId ];
+    const { rowCount } = await client.query(sql, values);
+    
+    client.release();
+    
+    if(!rowCount) return false;
+
+    return true;
+  }
+
   async findAll(managerId: string): Promise<Collaborator[]> {
     const client = await pool.connect();
     const sql = `SELECT * FROM collaborators WHERE manager_id LIKE $1`;

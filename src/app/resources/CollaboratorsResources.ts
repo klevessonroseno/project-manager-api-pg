@@ -60,6 +60,13 @@ class CollaboratorsResources {
     const managerId = request.managerId;
     const collaborators = await collaboratorsRepository.findAll(managerId);
     
+    const collaboratorsExists = await collaboratorsRepository
+      .checkIfCollaboratorsExists(managerId);
+    
+    if(!collaboratorsExists) return response.status(404).json({
+      error: 'No collaborator registered.',
+    });
+
     const data = collaborators.map(collaborator => {
       const id = collaborator.getId();
       const name = collaborator.getName();
