@@ -14,11 +14,23 @@ class SessionsResources {
       const schemaIsValid = await schema.isValid(request.body);
 
       if(!schemaIsValid) return response.status(400).json({
-          error: 'Validation failed.',
+          error: 'Bad Request.',
       });
 
-      const { email, password } = request.body;
-      const managerFoundByEmail = await managersRepository.checkIfManagerExistsByEmail(email);
+      const { 
+        email, 
+        password 
+      }: { 
+        email: string, 
+        password: string 
+      } = request.body;
+
+      if(typeof password !== 'string') return response.status(400).json({
+        error: 'Bad Request.',
+      });
+
+      const managerFoundByEmail = await managersRepository
+        .checkIfManagerExistsByEmail(email);
 
       if(!managerFoundByEmail) return response.status(401).json({
           error: 'Invalid email or password.',
@@ -36,7 +48,7 @@ class SessionsResources {
 
     } catch (error) {
       return response.status(500).json({
-        error: 'Validation failed.',
+        error: 'Something went wrong. Please try again in a few minutes.',
       });
     }
   }

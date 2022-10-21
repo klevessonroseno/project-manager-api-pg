@@ -31,7 +31,7 @@ class CollaboratorsResources {
       const id = collaboratorsServices.generateId();
 
       const collaboratorsFoundById = await collaboratorsRepository
-        .checkIfCollaboratorExistsById(id);
+        .checkIfCollaboratorExistsById(id, managerId);
 
       if(collaboratorsFoundById) return response.status(500).json({
         error: 'Something went wrong. Please try again in a few minutes.',
@@ -130,24 +130,26 @@ class CollaboratorsResources {
       });
 
       const { id }: { id: string } = request.body;
+      const { managerId } = request;
       
       if(typeof id !== 'string') return response.status(400).json({
         error: 'Bad Request.',
       });
 
       const collaboratorsFoundById = await collaboratorsRepository
-        .checkIfCollaboratorExistsById(id);
+        .checkIfCollaboratorExistsById(id, managerId);
 
       if(!collaboratorsFoundById) return response.status(404).json({
         error: 'Collaborator not found.',
       });
 
-      const collaborator = await collaboratorsRepository.findById(id);
+      const collaborator = await collaboratorsRepository
+        .findById(id, managerId);
 
       Object.assign(collaborator, request.body);     
 
       const collaboratorUpdated = await collaboratorsRepository
-        .update(collaborator);
+        .update(collaborator, managerId);
       
       if(collaboratorUpdated) return response.status(204).json({});
 

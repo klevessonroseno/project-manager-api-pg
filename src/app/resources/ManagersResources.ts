@@ -16,7 +16,7 @@ class ManagersResources {
       const schemaIsValid = await schema.isValid(request.body);
 
       if(!schemaIsValid) return response.status(400).json({
-          error: 'Validation failed.',
+          error: 'Bad Request.',
       });
       
       const { name, email, password }: {
@@ -24,6 +24,12 @@ class ManagersResources {
         email: string,
         password: string,
       } = request.body;
+
+      if(typeof name !== 'string'|| typeof password !== 'string') {
+        return response.status(400).json({
+          error: 'Bad Request.',          
+        });
+      }
 
       const managerFoundByEmail = await managersRepository
         .checkIfManagerExistsByEmail(email);

@@ -48,10 +48,21 @@ class CollaboratorRepository {
     return false;
   }
 
-  async checkIfCollaboratorExistsById(id: string): Promise<boolean> {
+  async checkIfCollaboratorExistsById(
+    collaboratorId: string, 
+    managerId: string
+  ): Promise<boolean> {
+
     const client = await pool.connect();
-    const sql = `SELECT id FROM collaborators WHERE id LIKE $1`;
-    const values = [ id ];
+
+    const sql = `
+      SELECT id FROM 
+        collaborators 
+      WHERE id LIKE $1 
+      AND manager_id LIKE $2
+    `;
+
+    const values = [ collaboratorId, managerId ];
     const { rowCount } = await client.query(sql, values);
     
     client.release();
@@ -117,10 +128,18 @@ class CollaboratorRepository {
     });
   }
 
-  async findById(collaboratorId: string): Promise<Collaborator> {
+  async findById(
+    collaboratorId: string, 
+    managerId: string
+  ): Promise<Collaborator> {
     const client = await pool.connect();
-    const sql = `SELECT * FROM collaborators WHERE id LIKE $1`;
-    const values = [ collaboratorId ];
+    const sql = `
+      SELECT * FROM 
+        collaborators 
+      WHERE id LIKE $1
+      AND manager_id LIKE $2`
+    ;
+    const values = [ collaboratorId, managerId ];
 
     const { rows } = await client.query(sql, values); 
 
@@ -129,18 +148,22 @@ class CollaboratorRepository {
     return new Collaborator(id, name, email, password, manager_id);
   }
 
-  async update(collaborator: Collaborator): Promise<boolean> {
+  async update(
+    collaborator: Collaborator, 
+    managerId: string
+  ): Promise<boolean> {
     const id = collaborator.getId();
     const name = collaborator.getName();
     const email = collaborator.getEmail();
 
     const client = await pool.connect();
-    const values = [ name, email, id ];
+    const values = [ name, email, id, managerId ];
 
     const sql = `
       UPDATE collaborators 
       SET name = $1, email = $2 
       WHERE id LIKE $3
+      AND manager_id LIKE $4
     `;
     const { rowCount } = await client.query(sql, values);
     
