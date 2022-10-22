@@ -7,7 +7,7 @@ class ProjectsResources {
   async store(request: Request, response: Response) {
     try {
       const {
-        id = 'd8ce806b-b113-4543-93b5-fecddf8fe859'/*uuiv4()*/, 
+        id = uuiv4(), 
         title, 
         description, 
         deadline, 
@@ -42,9 +42,20 @@ class ProjectsResources {
       });
 
     } catch (error) {
-      console.log(error)
       return response.status(500).json({
         error: 'Something went wrong.',
+      });
+    }
+  }
+
+  async find(request: Request, response: Response) {
+    try {
+      const { managerId } = request;
+      const data = await projectsRepository.find(managerId);
+      return response.status(200).json({ data });
+    } catch (error) {
+      return response.status(500).json({
+        error: 'Something went wrong.'
       });
     }
   }

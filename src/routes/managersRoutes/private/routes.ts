@@ -20,4 +20,6 @@ router.get('/managers/collaborators', collaboratorsResources.find);
 
 router.post('/managers/projects', projectsResources.store);
 
+router.get('/managers/projects', projectsResources.find);
+
 export default router;

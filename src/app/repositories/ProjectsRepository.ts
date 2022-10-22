@@ -48,6 +48,15 @@ class ProjectsRepository {
 
     return false;
   }
+
+  async find(managerId: string) {
+    const client = await pool.connect();
+    const sql = `SELECT * FROM projects WHERE manager_id LIKE $1`;
+    const values = [ managerId ];
+    const { rows } = await client.query(sql, values);
+
+    return rows;
+  } 
 }
 
 export default new ProjectsRepository();
