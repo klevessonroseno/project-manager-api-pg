@@ -6,6 +6,6 @@ CREATE TABLE projects(
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP,
   finished BOOLEAN DEFAULT FALSE,
-  manager_id INT NOT NULL,
+  manager_id VARCHAR(200) NOT NULL,
   FOREIGN KEY (manager_id) REFERENCES managers (id)
 );
