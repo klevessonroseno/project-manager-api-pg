@@ -7,7 +7,7 @@ class ProjectsResources {
   async store(request: Request, response: Response) {
     try {
       const {
-        id = uuiv4(), 
+        id = 'd8ce806b-b113-4543-93b5-fecddf8fe859'/*uuiv4()*/, 
         title, 
         description, 
         deadline, 
