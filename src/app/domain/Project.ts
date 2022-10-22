@@ -1,4 +1,4 @@
-class Project {
+export class Project {
   private readonly id: string;
   private title: string;
   private description: string;
