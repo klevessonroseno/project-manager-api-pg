@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import projectsRepository from '../repositories/ProjectsRepository';
 import * as Yup from 'yup';
+import { v4 as uuiv4 } from 'uuid';
 
 class ProjectsResources {
   async store(request: Request, response: Response) {
     try {
       const {
-        id, 
+        id = uuiv4(), 
         title, 
         description, 
         deadline, 
-        createdAt, 
-        updatedAt, 
-        finished, 
-        managerId,
+        createdAt = new Date(), 
+        updatedAt = new Date(), 
+        finished = false, 
       }: {
         id: string, 
         title: string, 
@@ -21,9 +21,10 @@ class ProjectsResources {
         deadline: Date, 
         createdAt: Date, 
         updatedAt: Date, 
-        finished: boolean, 
-        managerId: string,
+        finished: boolean,
       } = request.body;
+
+      const { managerId } = request;
 
       const projectCreated = await projectsRepository.save(
           id, 
@@ -41,6 +42,7 @@ class ProjectsResources {
       });
 
     } catch (error) {
+      console.log(error)
       return response.status(500).json({
         error: 'Something went wrong.',
       });

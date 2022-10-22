@@ -2,6 +2,7 @@ import { Router } from 'express';
 import managersResources from '../../../app/resources/ManagersResources';
 import collaboratorsResources from '../../../app/resources/CollaboratorsResources';
 import authManagerMiddleware from '../../../app/middlewares/authManager';
+import projectsResources from '../../../app/resources/ProjectsResources';
 
 const router = Router();
 
@@ -16,5 +17,7 @@ router.put('/managers/collaborators', collaboratorsResources.update);
 router.delete('/managers/collaborators', collaboratorsResources.delete);
 
 router.get('/managers/collaborators', collaboratorsResources.find);
+
+router.post('/managers/projects', projectsResources.store);
 
 export default router;
