@@ -29,7 +29,7 @@ class ManagersRepository {
     
     client.release();
 
-    if(rowCount && rowCount !== 0) return true;
+    if(rowCount) return true;
 
     return false;
   }
@@ -52,7 +52,7 @@ class ManagersRepository {
     
     client.release();
 
-    if(rowCount && rowCount !== 0) return true;
+    if(rowCount) return true;
 
     return false;
   }
@@ -65,7 +65,7 @@ class ManagersRepository {
     
     client.release();
 
-    if(rowCount && rowCount !== 0) return true;
+    if(rowCount) return true;
 
     return false;
   }
@@ -78,7 +78,7 @@ class ManagersRepository {
     
     client.release();
 
-    if(rowCount && rowCount !== 0) return true;
+    if(rowCount) return true;
 
     return false;
   }

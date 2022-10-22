@@ -22,7 +22,7 @@ class CollaboratorsResources {
       const { managerId } = request;
   
       const collaboratorsFoundByEmail = await collaboratorsRepository
-          .checkIfCollaboratorExistsByEmail(email, managerId);
+          .checkIfCollaboratorExistsByEmail(email);
       
       if(collaboratorsFoundByEmail) return response.status(409).json({
         error: 'Email already registered.',
@@ -132,9 +132,11 @@ class CollaboratorsResources {
       const { id }: { id: string } = request.body;
       const { managerId } = request;
       
-      if(typeof id !== 'string') return response.status(400).json({
-        error: 'Bad Request.',
-      });
+      if(typeof id !== 'string') {
+        return response.status(400).json({
+          error: 'Bad Request.',
+        });
+      }
 
       const collaboratorsFoundById = await collaboratorsRepository
         .checkIfCollaboratorExistsById(id, managerId);
@@ -145,6 +147,21 @@ class CollaboratorsResources {
 
       const collaborator = await collaboratorsRepository
         .findById(id, managerId);
+
+      if(request.body.email) {
+        const { email }: { email: string } = request.body;
+
+        if(email !== collaborator.getEmail()) {
+          const collaboratorsFoundByEmail = await collaboratorsRepository
+            .checkIfCollaboratorExistsByEmail(email);
+          
+          if(collaboratorsFoundByEmail) {
+            return response.status(409).json({
+              error: 'Email already registered.',
+            });  
+          }        
+        }
+      }
 
       Object.assign(collaborator, request.body);     
 

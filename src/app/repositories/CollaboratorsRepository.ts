@@ -29,21 +29,19 @@ class CollaboratorRepository {
   }
 
   async checkIfCollaboratorExistsByEmail(
-    email: string, 
-    managerId: string
+    email: string
   ): Promise<boolean> {
     const client = await pool.connect();
     const sql = `
       SELECT email FROM collaborators 
-      WHERE email LIKE $1 
-      AND manager_id LIKE $2
+      WHERE email LIKE $1
     `;
-    const values = [ email, managerId ];
+    const values = [ email ];
     const { rowCount } = await client.query(sql, values);
     
     client.release();
 
-    if(rowCount && rowCount !== 0) return true;
+    if(rowCount) return true;
 
     return false;
   }
@@ -67,7 +65,7 @@ class CollaboratorRepository {
     
     client.release();
 
-    if(rowCount && rowCount !== 0) return true;
+    if(rowCount) return true;
 
     return false;
   }
@@ -90,7 +88,7 @@ class CollaboratorRepository {
     
     client.release();
 
-    if(rowCount && rowCount !== 0) return true;
+    if(rowCount) return true;
 
     return false;
   }
@@ -103,9 +101,9 @@ class CollaboratorRepository {
     
     client.release();
     
-    if(!rowCount) return false;
+    if(rowCount) return true;
 
-    return true;
+    return false;
   }
 
   async findAll(managerId: string): Promise<Collaborator[]> {
@@ -169,7 +167,7 @@ class CollaboratorRepository {
     
     client.release();
 
-    if(rowCount && rowCount !== 0) return true;
+    if(rowCount) return true;
 
     return false;
   }
@@ -186,10 +184,9 @@ class CollaboratorRepository {
     
     client.release();
 
-    if(rowCount && rowCount !== 0) return true;
+    if(rowCount) return true;
 
     return false;
-
   }
 }
 
