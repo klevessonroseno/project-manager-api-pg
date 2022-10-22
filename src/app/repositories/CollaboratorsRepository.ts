@@ -173,6 +173,24 @@ class CollaboratorRepository {
 
     return false;
   }
+
+  async delete(collaboratorId: string, managerId: string): Promise<boolean> {
+    const client = await pool.connect();
+    const sql = `
+      DELETE FROM collaborators 
+      WHERE id LIKE $1 
+      AND manager_id LIKE $2
+    `;
+    const values = [ collaboratorId, managerId ];
+    const { rowCount } = await client.query(sql, values);
+    
+    client.release();
+
+    if(rowCount && rowCount !== 0) return true;
+
+    return false;
+
+  }
 }
 
 export default new CollaboratorRepository();

@@ -83,7 +83,7 @@ class CollaboratorsResources {
     }
   }
 
-  async findAll(request: Request, response: Response) {
+  async find(request: Request, response: Response) {
     try {
       const managerId = request.managerId;
     
@@ -155,6 +155,44 @@ class CollaboratorsResources {
 
     } catch (error) {
       return response.status(500).json({
+        error: 'Something went wrong. Please try again in a few minutes.',
+      });
+    }
+  }
+
+  async delete(request: Request, response: Response) {
+    try {
+      const schema = Yup.object().shape({
+        id: Yup.string().required(),
+      });
+
+      const schemaIsValid = await schema.isValid(request.body);
+
+      if(!schemaIsValid) return response.status(400).json({
+        error: 'Bad Request.',
+      });
+
+      const { id }: { id: string } = request.body;
+      const { managerId } = request;
+
+      if(typeof id !== 'string') return response.status(400).json({
+        error: 'Bad Request',
+      });
+
+      const collaboratorsFoundById = await collaboratorsRepository
+        .checkIfCollaboratorExistsById(id, managerId);
+
+      if(!collaboratorsFoundById) return response.status(404).json({
+        error: 'Collaborator not found',
+      });
+
+      const collaboratorDeleted = await collaboratorsRepository
+        .delete(id, managerId);
+
+      if(collaboratorDeleted) return response.status(204).json({});
+
+    } catch (error) {
+      return response.status(500).json({ 
         error: 'Something went wrong. Please try again in a few minutes.',
       });
     }
