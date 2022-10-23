@@ -9,7 +9,7 @@ const router = Router();
 
 router.post('/users', usersResources.save);
 
-router.post('/users/test', isRegistered, isManager, usersResources.test);
+router.post('/users/test', isManager, usersResources.test);
 
 router.post('/managers', managersResources.store);
 

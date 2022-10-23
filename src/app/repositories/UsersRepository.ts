@@ -50,7 +50,9 @@ class UsersRepository {
     const client = await pool.connect();
     const values = [ email ];
     const sql = `SELECT ismanager "isManager" FROM users WHERE email LIKE $1`;
-    const { rows } = await client.query(sql, values);
+    const { rows, rowCount } = await client.query(sql, values);
+
+    if(!rowCount) return false;
 
     type data = [{ isManager: boolean }]
 
