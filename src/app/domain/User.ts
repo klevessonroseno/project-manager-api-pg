@@ -1,4 +1,4 @@
-export abstract class User {
+export class User {
   private readonly id: string;
   private name: string;
   private email: string;
