@@ -3,16 +3,16 @@ import authConfig from '../../config/auth';
 import { Request, Response, NextFunction } from 'express';
 import { JwtPayloadToken } from '../rules/rules';
 
-export default async (request: Request, response: Response, next: NextFunction) => {
-  const { authorization } = request.headers; 
+export default async (req: Request, res: Response, next: NextFunction) => {
+  const { authorization } = req.headers; 
 
-  if(!authorization) return response.status(400).json({
+  if(!authorization) return res.status(400).json({
       error: 'Token not provided.',
   });
 
   const [ , token ] = authorization.split(' ');
 
-  if(!token) return response.status(401).json({
+  if(!token) return res.status(401).json({
       error: 'Token not provided.',
   });
 
@@ -20,15 +20,15 @@ export default async (request: Request, response: Response, next: NextFunction) 
     const decoded = jwt.verify(token, authConfig.secret);
     const { managerId, managerName, managerEmail } = decoded as JwtPayloadToken;
     
-    request.managerId = managerId;
-    request.managerName = managerName;
-    request.managerEmail = managerEmail;
+    req.managerId = managerId;
+    req.managerName = managerName;
+    req.managerEmail = managerEmail;
 
     return next();
     
   
   } catch (error) {
-    return response.status(401).json({
+    return res.status(401).json({
       error: 'Invalid token.',
     });
   }

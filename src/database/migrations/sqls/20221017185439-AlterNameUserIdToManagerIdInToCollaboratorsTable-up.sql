@@ -1,1 +1,0 @@
-ALTER TABLE collaborators RENAME user_id TO manager_id;
