@@ -108,6 +108,33 @@ class UsersRepository {
 
     return new User(id, name, email, password, isManager);
   }
+
+  async update(user: User): Promise<boolean> {
+    
+    const client = await pool.connect();
+
+    const id = user.getId();
+    const name = user.getName();
+    const email = user.getEmail();
+    const password = user.getPassword();
+    const updatedAt = new Date();
+    
+    const values = [ name, email, password, updatedAt, id ];
+
+    const sql = `
+      UPDATE users 
+      SET name = $1, email = $2, password = $3, updated_at = $4 
+      WHERE id LIKE $4
+    `;
+
+    const { rowCount } = await client.query(sql, values);
+    
+    client.release();
+
+    if(rowCount) return true;
+
+    return false;
+  }
 }
 
 export default new UsersRepository();

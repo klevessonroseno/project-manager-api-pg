@@ -9,6 +9,6 @@ router.post('/users', usersResources.store);
 
 router.post('/sessions', sessionsResources.store);
 
-router.post('/managers/password/reset/', managersResources.resetPassword);
+router.post('/password/reset/', usersResources.resetPassword);
 
 export default router;

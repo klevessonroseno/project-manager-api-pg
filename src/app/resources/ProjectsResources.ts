@@ -24,7 +24,7 @@ class ProjectsResources {
         finished: boolean,
       } = request.body;
 
-      const { managerId } = request;
+      const userId = request.id;
 
       const projectCreated = await projectsRepository.save(
           id, 
@@ -34,7 +34,7 @@ class ProjectsResources {
           createdAt, 
           updatedAt, 
           finished, 
-          managerId
+          userId
       );
 
       if(projectCreated) return response.status(201).json({
@@ -50,8 +50,8 @@ class ProjectsResources {
 
   async find(request: Request, response: Response) {
     try {
-      const { managerId } = request;
-      const data = await projectsRepository.find(managerId);
+      const { id } = request;
+      const data = await projectsRepository.find(id);
       return response.status(200).json({ data });
     } catch (error) {
       return response.status(500).json({

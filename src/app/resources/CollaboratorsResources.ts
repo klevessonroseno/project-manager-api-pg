@@ -19,7 +19,7 @@ class CollaboratorsResources {
       });
   
       const { name, email }: { name: string, email: string } = request.body;
-      const { managerId } = request;
+      const { id } = request;
   
       const collaboratorsFoundByEmail = await collaboratorsRepository
           .checkIfCollaboratorExistsByEmail(email);
@@ -28,10 +28,10 @@ class CollaboratorsResources {
         error: 'Email already registered.',
       });
   
-      const id = collaboratorsServices.generateId();
+      const userId = collaboratorsServices.generateId();
 
       const collaboratorsFoundById = await collaboratorsRepository
-        .checkIfCollaboratorExistsById(id, managerId);
+        .checkIfCollaboratorExistsById(id, userId);
 
       if(collaboratorsFoundById) return response.status(500).json({
         error: 'Something went wrong. Please try again in a few minutes.',
@@ -47,13 +47,13 @@ class CollaboratorsResources {
         name, 
         email,
         passwordEncrypted, 
-        managerId
+        userId
       );
   
       if(collaboratorCreated) {
 
         const collaborator = await collaboratorsRepository
-          .findByEmail(email, managerId);
+          .findByEmail(email, userId);
 
         const [ collaboratorFirstName ] = collaborator.getName().split(' ');
         
@@ -85,16 +85,16 @@ class CollaboratorsResources {
 
   async find(request: Request, response: Response) {
     try {
-      const managerId = request.managerId;
+      const userId = request.id;
     
       const collaboratorsExists = await collaboratorsRepository
-        .checkIfCollaboratorsExists(managerId);
+        .checkIfCollaboratorsExists(userId);
     
       if(!collaboratorsExists) return response.status(404).json({
         error: 'No collaborator registered.',
       });
 
-      const collaborators = await collaboratorsRepository.findAll(managerId);
+      const collaborators = await collaboratorsRepository.findAll(userId);
 
       const data = collaborators.map(collaborator => {
 
@@ -130,7 +130,7 @@ class CollaboratorsResources {
       });
 
       const { id }: { id: string } = request.body;
-      const { managerId } = request;
+      const userId = request.id;
       
       if(typeof id !== 'string') {
         return response.status(400).json({
@@ -139,14 +139,14 @@ class CollaboratorsResources {
       }
 
       const collaboratorsFoundById = await collaboratorsRepository
-        .checkIfCollaboratorExistsById(id, managerId);
+        .checkIfCollaboratorExistsById(id, userId);
 
       if(!collaboratorsFoundById) return response.status(404).json({
         error: 'Collaborator not found.',
       });
 
       const collaborator = await collaboratorsRepository
-        .findById(id, managerId);
+        .findById(id, userId);
 
       if(request.body.email) {
         const { email }: { email: string } = request.body;
@@ -166,7 +166,7 @@ class CollaboratorsResources {
       Object.assign(collaborator, request.body);     
 
       const collaboratorUpdated = await collaboratorsRepository
-        .update(collaborator, managerId);
+        .update(collaborator, userId);
       
       if(collaboratorUpdated) return response.status(204).json({});
 
@@ -190,21 +190,21 @@ class CollaboratorsResources {
       });
 
       const { id }: { id: string } = request.body;
-      const { managerId } = request;
+      const userId = request.id;
 
       if(typeof id !== 'string') return response.status(400).json({
         error: 'Bad Request',
       });
 
       const collaboratorsFoundById = await collaboratorsRepository
-        .checkIfCollaboratorExistsById(id, managerId);
+        .checkIfCollaboratorExistsById(id, userId);
 
       if(!collaboratorsFoundById) return response.status(404).json({
         error: 'Collaborator not found',
       });
 
       const collaboratorDeleted = await collaboratorsRepository
-        .delete(id, managerId);
+        .delete(id, userId);
 
       if(collaboratorDeleted) return response.status(204).json({});
 

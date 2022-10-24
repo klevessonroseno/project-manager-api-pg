@@ -18,11 +18,11 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
 
   try {
     const decoded = jwt.verify(token, authConfig.secret);
-    const { managerId, managerName, managerEmail } = decoded as JwtPayloadToken;
+    const { id, name, email } = decoded as JwtPayloadToken;
     
-    req.managerId = managerId;
-    req.managerName = managerName;
-    req.managerEmail = managerEmail;
+    req.id = id;
+    req.name = name;
+    req.email = email;
 
     return next();
     

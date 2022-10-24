@@ -102,7 +102,7 @@ class ManagersResources {
         error: 'Validation failed.',
       });
   
-      const managerId = request.managerId;
+      const managerId = request.id;
 
       if(!managerId) return response.status(400).json({
         error: 'Validation faild.',        

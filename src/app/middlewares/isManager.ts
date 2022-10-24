@@ -3,15 +3,15 @@ import usersRepository from '../repositories/UsersRepository';
 
 export async function isManager(req: Request, res: Response, next: NextFunction) {
   try {
-    const { managerId }: { managerId: string } = req;
+    const { id }: { id: string } = req;
 
-    if(!managerId || typeof managerId !== 'string') {
+    if(!id || typeof id !== 'string') {
       return res.status(400).json({
         error: 'Bad Request',
       });
     }    
 
-    const isManager = await usersRepository.isManager(managerId);
+    const isManager = await usersRepository.isManager(id);
 
     if(!isManager) return res.status(401).json({
       error: 'Access Denied.',
