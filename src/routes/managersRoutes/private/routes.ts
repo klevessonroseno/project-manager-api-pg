@@ -3,7 +3,6 @@ import managersResources from '../../../app/resources/ManagersResources';
 import collaboratorsResources from '../../../app/resources/CollaboratorsResources';
 import { auth } from '../../../app/middlewares/auth';
 import { isManager } from '../../../app/middlewares/isManager';
-import isRegistered from '../../../app/middlewares/isRegistered';
 import projectsResources from '../../../app/resources/ProjectsResources';
 
 const router = Router();

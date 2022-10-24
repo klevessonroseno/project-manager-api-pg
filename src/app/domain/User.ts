@@ -3,17 +3,20 @@ export class User {
   private name: string;
   private email: string;
   private password: string;
+  private isManager: boolean;
 
   constructor(
     id: string,
     name: string, 
     email: string, 
-    password: string
+    password: string,
+    isManager: boolean,
   ) {
     this.id = id;
     this.name = name;
     this.email = email;
     this.password = password;
+    this.isManager = isManager;
   }
 
   public getId(): string {

@@ -7,6 +7,6 @@ export class Manager extends User {
     email: string, 
     password: string,
   ) {
-    super(id, name, email, password);
+    super(id, name, email, password, true);
   }
 }

@@ -1,7 +1,8 @@
 import * as Yup from 'yup';
-import managersRepository from '../repositories/ManagersRepository';
-import sessionsServices from '../services/SessionsServices';
+import usersRepository from '../repositories/UsersRepository';
 import { Request, Response } from 'express';
+import { compare } from 'bcrypt';
+import { generateJwtToken } from '../helpers/generateJwtToken';
 
 class SessionsResources {
   async store(request: Request, response: Response) {
@@ -29,21 +30,21 @@ class SessionsResources {
         error: 'Bad Request.',
       });
 
-      const managerFoundByEmail = await managersRepository
-        .checkIfManagerExistsByEmail(email);
+      const emailExists = await usersRepository.emailExists(email);
 
-      if(!managerFoundByEmail) return response.status(401).json({
+      if(!emailExists) return response.status(401).json({
           error: 'Invalid email or password.',
       });
 
-      const manager = await managersRepository.findByEmail(email);
-      const passwordsMatch = await sessionsServices.comparePasswords(password, manager.getPassword());
+      const user = await usersRepository.getByEmail(email);
+      const passwordsMatch = await compare(password, user.getPassword());
 
       if(!passwordsMatch) return response.status(401).json({
           error: 'Invalid email or password.',
       }); 
       
-      const token = sessionsServices.generateManagerJwtToken(manager);
+      const token = generateJwtToken(user);
+
       return response.status(200).json({ token });
 
     } catch (error) {

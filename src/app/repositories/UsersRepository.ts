@@ -6,6 +6,7 @@ type data = [{
   name: string, 
   email: string, 
   password: string,  
+  isManager: boolean,
 }];
 
 class UsersRepository {
@@ -20,7 +21,7 @@ class UsersRepository {
     const client = await pool.connect();
     const sql = `         
       INSERT INTO users 
-        (id, name, email, password, ismanager)
+        (id, name, email, password)
       VALUES
         ($1, $2, $3, $4)
     `;
@@ -62,8 +63,8 @@ class UsersRepository {
 
   async emailExists(email: string): Promise<boolean> {
     const client = await pool.connect();
-    const sql = `SELECT email FROM users WHERE email LIKE $1`;
     const values = [ email ];
+    const sql = `SELECT email FROM users WHERE email LIKE $1`;
     const { rowCount } = await client.query(sql, values);
     
     client.release();
@@ -84,6 +85,28 @@ class UsersRepository {
     if(rowCount) return true;
 
     return false;
+  }
+
+  async getByEmail(userEmail: string): Promise<User> {
+    const client = await pool.connect();
+    const values = [ userEmail ];
+    const sql = `
+      SELECT  
+        id, 
+        name, 
+        email, 
+        password, 
+        ismanager "isManager"
+      FROM 
+        users 
+      WHERE email LIKE $1`;
+    
+    const { rows } = await client.query(sql, values);
+    const [{ id, name, email, password, isManager }] = rows as data;
+    
+    client.release();
+
+    return new User(id, name, email, password, isManager);
   }
 }
 

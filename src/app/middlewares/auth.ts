@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import authConfig from '../../config/auth';
+import { authConfig } from '../../config/auth';
 import { Request, Response, NextFunction } from 'express';
 import { JwtPayloadToken } from '../rules/rules';
 

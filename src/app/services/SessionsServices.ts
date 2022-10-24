@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import authConfig from '../../config/auth';
+import { authConfig } from '../../config/auth';
 import { Manager } from '../domain/Manager';
 import { Services } from './Services';
 

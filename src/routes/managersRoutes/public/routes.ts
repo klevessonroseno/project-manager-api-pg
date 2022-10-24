@@ -5,13 +5,9 @@ import usersResources from '../../../app/resources/UsersResources';
 
 const router = Router();
 
-router.post('/users', usersResources.save);
+router.post('/users', usersResources.store);
 
-router.post('/users/test', usersResources.test);
-
-router.post('/managers', managersResources.store);
-
-router.post('/managers/sessions', sessionsResources.store);
+router.post('/sessions', sessionsResources.store);
 
 router.post('/managers/password/reset/', managersResources.resetPassword);
 
