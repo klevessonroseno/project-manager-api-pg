@@ -3,7 +3,7 @@ import authConfig from '../../config/auth';
 import { Request, Response, NextFunction } from 'express';
 import { JwtPayloadToken } from '../rules/rules';
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+export async function auth(req: Request, res: Response, next: NextFunction) {
   const { authorization } = req.headers; 
 
   if(!authorization) return res.status(400).json({

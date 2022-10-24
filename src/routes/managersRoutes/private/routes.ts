@@ -1,12 +1,15 @@
 import { Router } from 'express';
 import managersResources from '../../../app/resources/ManagersResources';
 import collaboratorsResources from '../../../app/resources/CollaboratorsResources';
-import authManagerMiddleware from '../../../app/middlewares/authManager';
+import { auth } from '../../../app/middlewares/auth';
+import { isManager } from '../../../app/middlewares/isManager';
+import isRegistered from '../../../app/middlewares/isRegistered';
 import projectsResources from '../../../app/resources/ProjectsResources';
 
 const router = Router();
 
-router.use(authManagerMiddleware);
+router.use(auth);
+router.use(isManager);
 
 router.put('/managers', managersResources.update);
 

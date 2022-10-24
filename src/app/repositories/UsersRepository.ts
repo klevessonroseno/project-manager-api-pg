@@ -9,13 +9,12 @@ type data = [{
 }];
 
 class UsersRepository {
-  async saveManager(
+  async save(
 
     id: string, 
     name: string, 
     email: string, 
     password: string,
-    isManager: boolean
     
   ): Promise<boolean> {
     const client = await pool.connect();
@@ -23,9 +22,9 @@ class UsersRepository {
       INSERT INTO users 
         (id, name, email, password, ismanager)
       VALUES
-        ($1, $2, $3, $4, $5)
+        ($1, $2, $3, $4)
     `;
-    const values = [ id, name, email, password, isManager ];
+    const values = [ id, name, email, password ];
     const { rowCount } = await client.query(sql, values);
     
     client.release();
@@ -46,19 +45,45 @@ class UsersRepository {
     return false;
   }
 
-  async isManager(email: string): Promise<boolean> {
+  async isManager(id: string): Promise<boolean> {
     const client = await pool.connect();
-    const values = [ email ];
-    const sql = `SELECT ismanager "isManager" FROM users WHERE email LIKE $1`;
+    const values = [ id ];
+    const sql = `SELECT ismanager "isManager" FROM users WHERE id LIKE $1`;
     const { rows, rowCount } = await client.query(sql, values);
 
     if(!rowCount) return false;
 
-    type data = [{ isManager: boolean }]
+    type data = [{ isManager: boolean }];
 
     const [{ isManager }] = rows as data;
     
     return isManager;
+  }
+
+  async emailExists(email: string): Promise<boolean> {
+    const client = await pool.connect();
+    const sql = `SELECT email FROM users WHERE email LIKE $1`;
+    const values = [ email ];
+    const { rowCount } = await client.query(sql, values);
+    
+    client.release();
+
+    if(rowCount) return true;
+
+    return false;
+  }
+
+  async idExists(id: string): Promise<boolean> {
+    const client = await pool.connect();
+    const sql = `SELECT id FROM users WHERE id LIKE $1`;
+    const values = [ id ];
+    const { rowCount } = await client.query(sql, values);
+    
+    client.release();
+
+    if(rowCount) return true;
+
+    return false;
   }
 }
 
