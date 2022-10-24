@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import managersRoutes from './managersRoutes/index';
+import publicManagerRoutes from './public/routes';
+import privateManagerRoutes from './private/routes';
 
-const routes = Router();
+const router = Router();
 
-routes.use(managersRoutes);
+router.use(publicManagerRoutes);
+router.use(privateManagerRoutes);
 
-export default routes;
+export default router;

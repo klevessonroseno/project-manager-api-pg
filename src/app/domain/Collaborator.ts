@@ -8,9 +8,10 @@ export class Collaborator extends User {
     name: string, 
     email: string, 
     password: string, 
+    isManager: boolean,
     managerId: string,
   ) {
-    super(id, name, email, password, false);
+    super(id, name, email, password, isManager);
     this.managerId = managerId;
   }
 

@@ -25,7 +25,7 @@ class CollaboratorRepository {
     const { rows } = await client.query(sql, values);
     const [{ id, name, email, password, manager_id }] = rows as data;
     
-    return new Collaborator(id, name, email, password, manager_id);
+    return new Collaborator(id, name, email, password, true,  manager_id);
   }
 
   async checkIfCollaboratorExistsByEmail(
@@ -122,7 +122,7 @@ class CollaboratorRepository {
         manager_id: string,
       };
 
-      return new Collaborator(id, name, email, password, manager_id);
+      return new Collaborator(id, name, email, password, true, manager_id);
     });
   }
 
@@ -143,7 +143,7 @@ class CollaboratorRepository {
 
     const [{ id, name, email, password, manager_id }] = rows as data;
 
-    return new Collaborator(id, name, email, password, manager_id);
+    return new Collaborator(id, name, email, password, false, manager_id);
   }
 
   async update(

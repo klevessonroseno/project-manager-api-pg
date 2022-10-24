@@ -24,7 +24,7 @@ class ProjectsRepository {
         created_at, 
         updated_at, 
         finished, 
-        manager_id
+        user_id
       ) 
         VALUES 
       (
@@ -49,10 +49,10 @@ class ProjectsRepository {
     return false;
   }
 
-  async find(managerId: string) {
+  async find(userId: string) {
     const client = await pool.connect();
-    const sql = `SELECT * FROM projects WHERE manager_id LIKE $1`;
-    const values = [ managerId ];
+    const sql = `SELECT * FROM projects WHERE user_id LIKE $1`;
+    const values = [ userId ];
     const { rows } = await client.query(sql, values);
 
     return rows;
