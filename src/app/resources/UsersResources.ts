@@ -103,7 +103,7 @@ class UsersResources {
           title: 'Email atualizado',
           massage: `${ firstName }, sua nova senha é ${newPassword}`,
         }
-        
+       
         const emailSender = new EmailSender(
           emailData.email,
           emailData.title,
@@ -118,6 +118,7 @@ class UsersResources {
       }
 
     } catch (error) {
+      console.log(error)
       return response.status(500).json({ error });
     }
   }

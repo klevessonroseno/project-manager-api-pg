@@ -117,14 +117,16 @@ class UsersRepository {
     const name = user.getName();
     const email = user.getEmail();
     const password = user.getPassword();
-    const updatedAt = new Date();
     
-    const values = [ name, email, password, updatedAt, id ];
+    const values = [ name, email, password, id ];
 
     const sql = `
-      UPDATE users 
-      SET name = $1, email = $2, password = $3, updated_at = $4 
-      WHERE id LIKE $4
+      UPDATE 
+        users 
+      SET 
+        name = $1, email = $2, password = $3 
+      WHERE 
+        id LIKE $4
     `;
 
     const { rowCount } = await client.query(sql, values);

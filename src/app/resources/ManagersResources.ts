@@ -182,9 +182,9 @@ class ManagersResources {
 
       const manager = await managersRepository.findByEmail(email);
       const newPassword = managersServices.generatePassword();
-      const newPasswordEncrypted = managersServices.encryptPassword(newPassword);
+      const newPasswordEncrypted = await managersServices.encryptPassword(newPassword);
 
-      manager.setPassword(await newPasswordEncrypted);
+      manager.setPassword(newPasswordEncrypted);
 
       const managerUpdated = await managersRepository.update(manager);
 
