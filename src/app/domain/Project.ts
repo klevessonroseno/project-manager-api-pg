@@ -1,3 +1,5 @@
+import { Tasks } from "./Tasks";
+
 export class Project {
   private readonly id: string;
   private title: string;
@@ -7,6 +9,7 @@ export class Project {
   private updatedAt: Date;
   private finished: boolean;
   private readonly managerId: string;
+  private tasks: Tasks[] = [];
 
   constructor(
     id: string, 
@@ -78,5 +81,13 @@ export class Project {
 
     public getManagerId(): string {
       return this.managerId;
+    }
+
+    public getTasks(): Tasks[] {
+      return this.tasks;
+    }
+
+    public setTasks(tasks: Tasks[]): void {
+      this.tasks = tasks;
     }
 }

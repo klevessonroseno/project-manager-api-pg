@@ -54,13 +54,13 @@ class TasksRepository {
 
   async find(userId: string, projectId: string) {
     const client = await pool.connect();
-
+    const values = [ userId, projectId ];
+    
     const sql = `
       SELECT * FROM tasks 
       WHERE user_id LIKE $1 
       AND project_id LIKE $2`;
-      
-    const values = [ userId, projectId ];
+
     const { rows } = await client.query(sql, values);
 
     return rows;

@@ -10,7 +10,7 @@ class ProjectsRepository {
     createdAt: Date, 
     updatedAt: Date, 
     finished: boolean, 
-    managerId: string
+    managerId: string,
   ): Promise<boolean> {  
     const client = await pool.connect();
     const sql = `
