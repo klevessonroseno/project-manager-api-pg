@@ -109,6 +109,28 @@ class UsersRepository {
     return new User(id, name, email, password, isManager);
   }
 
+  async getById(userId: string): Promise<User> {
+    const client = await pool.connect();
+    const values = [ userId ];
+    const sql = `
+      SELECT  
+        id, 
+        name, 
+        email, 
+        password, 
+        ismanager "isManager"
+      FROM 
+        users 
+      WHERE id LIKE $1`;
+    
+    const { rows } = await client.query(sql, values);
+    const [{ id, name, email, password, isManager }] = rows as data;
+    
+    client.release();
+
+    return new User(id, name, email, password, isManager);
+  }
+
   async update(user: User): Promise<boolean> {
     
     const client = await pool.connect();

@@ -5,6 +5,7 @@ import { generateId } from '../helpers/generateId';
 import { encryptPassword } from '../helpers/encryptPassword';
 import { generatePassword } from '../helpers/generatePassword';
 import { EmailSender } from '../services/email/EmailSender';
+import { compare } from 'bcrypt';
 
 class UsersResources {
   async store(request: Request, response: Response) {
@@ -65,6 +66,93 @@ class UsersResources {
       });
     }
   };
+
+  async update(request: Request, response: Response) {
+    try {
+      const schema = Yup.object().shape({
+        name: Yup.string(),
+        email: Yup.string().email(),
+        password: Yup.string().min(6).max(10),
+        oldPassword: Yup.string().min(6).max(10).when(
+          'password', 
+          (password, field) => { 
+            return password 
+              ? field.required() 
+              : field; 
+          }
+        ),
+        confirmPassword: Yup.string().min(6).max(10).when(
+          'password',
+          (password, field) => {
+            return password 
+              ? field.required().oneOf([Yup.ref('password')]) 
+              : field;
+          }
+        ),
+      });
+  
+      const schemaIsValid = await schema.isValid(request.body);
+      
+      if(!schemaIsValid || request.body.id) {
+        return response.status(400).json({
+          error: 'Bad Request.',
+        });  
+      }  
+
+      if(!request.id || typeof request.id !== 'string') {
+        return response.status(400).json({
+          error: 'Bad Request.',        
+        });
+      }
+      
+      const { id } = request;
+      const idExists = await usersRepository.idExists(id);
+
+      if(!idExists) return response.status(401).json({
+        error: 'Unauthorized.',        
+      });
+
+      const user = await usersRepository.getById(id);
+      
+      if(request.body.email) {
+        const { email }: { email: string } = request.body;
+
+        if(email !== user.getEmail()) {
+          const emailExists = await usersRepository.emailExists(email);
+
+          if(emailExists) return response.status(409).json({
+              error: 'Email already registered.',
+          });
+        }
+      }
+
+      if(request.body.oldPassword) {
+        const { oldPassword }: { oldPassword: string } = request.body;
+        const password = user.getPassword();
+        const passwordsMatch = await compare(oldPassword, password);
+  
+        if(!passwordsMatch) return response.status(401).json({
+            error: 'Old password does not match entered password.',
+        });
+      }
+  
+      if(request.body.password) {
+        const { password }: { password: string } = request.body;
+        request.body.password = await encryptPassword(password);
+      }
+
+      Object.assign(user, request.body);
+  
+      const userUpdated = await usersRepository.update(user);
+  
+      if(userUpdated) return response.status(204).json();
+
+    } catch (error) {
+      return response.status(500).json({ 
+        error: 'Something went wrong. Please try again in a few minutes.' 
+      });
+    }
+  }
 
   async resetPassword(request: Request, response: Response) {
     try {
