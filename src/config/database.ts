@@ -1,7 +1,5 @@
 import { Pool } from 'pg';
-import { config } from 'dotenv';
-
-config();
+import 'dotenv/config';
 
 export default new Pool ({
     max: 20,

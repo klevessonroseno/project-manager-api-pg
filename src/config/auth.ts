@@ -1,6 +1,4 @@
-import { config } from 'dotenv';
-
-config();
+import 'dotenv/config';
 
 export const authConfig = {
   secret: String(process.env.AUTH_SECRET),

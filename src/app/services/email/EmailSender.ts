@@ -1,7 +1,5 @@
-import { config } from 'dotenv';
+import 'dotenv/config';
 import { EmailConfig } from '../../../config/EmailConfig';
-
-config();
 
 export class EmailSender extends EmailConfig {
   constructor(sendTo: string, title: string, text: string) {

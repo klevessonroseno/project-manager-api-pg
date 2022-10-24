@@ -1,9 +1,7 @@
+import 'dotenv/config';
 import nodemailer, { SentMessageInfo } from 'nodemailer';
-import { config } from 'dotenv';
 import Mail from 'nodemailer/lib/mailer';
 import { IEmailData } from '../app/rules/rules';
-
-config();
 
 export abstract class EmailConfig {
   
