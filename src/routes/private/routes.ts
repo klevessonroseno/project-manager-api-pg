@@ -2,7 +2,7 @@ import { Router } from 'express';
 import collaboratorsResources from '../../app/resources/CollaboratorsResources';
 import { auth } from '../../app/middlewares/auth';
 import { isManager } from '../../app/middlewares/isManager';
-import projectsResources from '../../app/resources/ProjectsResources';
+import { ProjectsResources } from '../../app/resources/ProjectsResources';
 import usersResources from '../../app/resources/UsersResources';
 import tasksResources from '../../app/resources/TasksResources';
 
@@ -13,9 +13,11 @@ router.use(isManager);
 
 router.put('/users', usersResources.update);
 
-router.post('/projects', projectsResources.store);
+router.post('/projects', ProjectsResources.store);
 
-router.get('/projects', projectsResources.find);
+router.get('/projects', ProjectsResources.find);
+
+router.get('/project', ProjectsResources.getByProjectId)
 
 router.post('/tasks', tasksResources.store);
 

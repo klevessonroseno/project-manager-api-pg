@@ -8,7 +8,7 @@ export class Project {
   private readonly createdAt: Date;
   private updatedAt: Date;
   private finished: boolean;
-  private readonly managerId: string;
+  private readonly userId: string;
   private tasks: Task[] = [];
 
   constructor(
@@ -19,7 +19,7 @@ export class Project {
     createdAt: Date, 
     updatedAt: Date, 
     finished: boolean, 
-    managerId: string
+    userId: string
 ) {
     this.id = id
     this.title = title
@@ -28,7 +28,7 @@ export class Project {
     this.createdAt = createdAt
     this.updatedAt = updatedAt
     this.finished = finished
-    this.managerId = managerId
+    this.userId = userId
   }
 
     public getId(): string {
@@ -79,8 +79,8 @@ export class Project {
       this.finished = finished;
     }
 
-    public getManagerId(): string {
-      return this.managerId;
+    public getUserId(): string {
+      return this.userId;
     }
 
     public getTasks(): Task[] {
