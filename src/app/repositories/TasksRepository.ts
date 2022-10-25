@@ -1,8 +1,8 @@
 import pool from '../../config/database';
 import { Task } from '../domain/Task';
 
-class TasksRepository {
-  async save(
+export class TasksRepository {
+  static async save(
     id: string,
     title: string,
     description: string,
@@ -52,7 +52,7 @@ class TasksRepository {
     return false;
   }
 
-  async find(userID: string, projectID: string): Promise<Task[]> {
+  static async find(userID: string, projectID: string): Promise<Task[]> {
     const client = await pool.connect();
     const values = [userID, projectID];
 
@@ -103,5 +103,3 @@ class TasksRepository {
     return tasks;
   }
 }
-
-export default new TasksRepository();

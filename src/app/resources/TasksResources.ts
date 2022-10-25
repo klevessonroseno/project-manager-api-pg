@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import tasksRepository from '../repositories/TasksRepository';
+import  { TasksRepository } from '../repositories/TasksRepository';
 import * as Yup from 'yup';
 import { generateId } from '../helpers/generateId';
 
@@ -42,7 +42,7 @@ class TasksResources {
 
       const userId = request.id;
 
-      const taskCreated = await tasksRepository.save(
+      const taskCreated = await TasksRepository.save(
         id,
         title,
         description,
@@ -70,7 +70,7 @@ class TasksResources {
     try {
       const { id } = request;
       const { projectId } = request.body;
-      const data = await tasksRepository.find(id, projectId);
+      const data = await TasksRepository.find(id, projectId);
       return response.status(200).json({ data });
     } catch (error) {
       return response.status(500).json({

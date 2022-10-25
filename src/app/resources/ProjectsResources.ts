@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { generateId } from '../helpers/generateId';
 import { Project } from '../domain/Project';
 import { Task } from '../domain/Task';
-import TasksRepository from '../repositories/TasksRepository';
+import { TasksRepository } from '../repositories/TasksRepository';
 
 export class ProjectsResources {
   static async store(request: Request, response: Response) {
