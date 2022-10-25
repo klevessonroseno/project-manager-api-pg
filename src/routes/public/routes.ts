@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import sessionsResources from '../../app/resources/SessionsResources';
+import TasksResources from '../../app/resources/TasksResources';
 import usersResources from '../../app/resources/UsersResources';
 
 const router = Router();

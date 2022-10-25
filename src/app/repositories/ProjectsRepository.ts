@@ -49,13 +49,51 @@ class ProjectsRepository {
     return false;
   }
 
-  async find(userId: string) {
+  async find(userID: string): Promise<Project[]> {
     const client = await pool.connect();
-    const sql = `SELECT * FROM projects WHERE user_id LIKE $1`;
-    const values = [ userId ];
+    const values = [ userID ];
+
+    const sql = `
+      SELECT
+        id, 
+        title, 
+        description, 
+        deadline, 
+        created_at "createdAt",
+        updated_at "updatedAt",
+        finished,
+        user_id "userId"
+      FROM projects 
+      WHERE user_id LIKE $1
+    `;
+
     const { rows } = await client.query(sql, values);
 
-    return rows;
+    type data = {
+      id: string, 
+      title: string, 
+      description: string, 
+      deadline: Date, 
+      createdAt: Date,
+      updatedAt: Date,
+      finished: boolean,
+      userId: string,
+    };
+
+    const projects: Project[] = rows.map((project: data) => {
+      return new Project(
+        project.id, 
+        project.title, 
+        project.description, 
+        project.deadline, 
+        project.createdAt,
+        project.updatedAt,
+        project.finished,
+        project.userId,
+      );
+    });
+
+    return projects;
   } 
 }
 
